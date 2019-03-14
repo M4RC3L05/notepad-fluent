@@ -1,71 +1,27 @@
 import './../assets/css/styles.css'
+import Container from './Container'
+import Dispatcher from './Dispatcher'
+import SideBarView from './Views/SideBarView'
+import SideBarStore from './Stores/SideBarStore'
+import EditorView from './Views/EditorView'
+import EditorStore from './Stores/EditorStore'
 
-const navToggler = document.querySelector('.side-bar__icon#menu')
-const sidebar = document.querySelector('.side-bar')
-navToggler.addEventListener('click', () => {
-    sidebar.classList.toggle('open')
-})
+const start = () => {
+    const container = Container.getInstance()
 
-const path = require('path')
-const fs = require('fs')
-const readline = require('readline')
+    container
+        .registerSingleton('Dispatcher', () => Dispatcher.create())
+        .registerSingleton('SideBarStore', () => SideBarStore.create())
+        .registerSingleton('EditorStore', () => EditorStore.create())
 
-function loadFile() {
-    const fileStream = fs.createReadStream(
-        path.resolve(__dirname, '..', '..', 'abc.txt')
-    )
-
-    const rl = readline.createInterface({
-        input: fileStream,
-        crlf: Infinity
+    SideBarView.create({
+        dispatcher: container.get('Dispatcher'),
+        sideBarStore: container.get('SideBarStore')
     })
 
-    rl.on('line', line => {
-        const div = document.createElement('div')
-        if (line.trim().length <= 0) line = '<br>'
-        line = line.replace(' ', '&nbsp;')
-        div.innerHTML = line
-        document.querySelector('#content-editable').appendChild(div)
+    EditorView.create({
+        dispatcher: container.get('Dispatcher'),
+        editorStore: container.get('EditorStore')
     })
 }
-
-function saveFile() {
-    const data = Array.from(
-        document.querySelector('#content-editable').childNodes
-    )
-        .map(el => {
-            let str = ''
-            if (el.nodeType && el.nodeType === 3) {
-                str += el.textContent + '\n'
-            } else if (el.firstChild.nodeType === 3) {
-                str += el.textContent + '\n'
-            } else {
-                str += '\n'
-            }
-
-            return str
-        })
-        .join('')
-
-    fs.writeFile(
-        path.resolve(__dirname, '..', '..', 'abc.txt'),
-        data,
-        (err, d) => {}
-    )
-}
-
-document.querySelector('#content-editable').addEventListener('keydown', e => {
-    if (e.keyCode === 9) {
-        e.preventDefault()
-
-        const editor = document.querySelector('#content-editable')
-
-        document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;')
-    }
-    if (e.keyCode === 83 && e.ctrlKey) {
-        console.log('saving')
-        saveFile()
-    }
-})
-
-loadFile()
+document.addEventListener('DOMContentLoaded', start)

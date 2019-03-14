@@ -1,7 +1,8 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
+import fs from 'fs'
 import { format as formatUrl } from 'url'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -10,7 +11,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let mainWindow
 
 function createMainWindow() {
-    const window = new BrowserWindow()
+    const window = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        }
+    })
 
     if (isDevelopment) {
         window.webContents.openDevTools()
@@ -62,4 +67,14 @@ app.on('activate', () => {
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
     mainWindow = createMainWindow()
+})
+
+ipcMain.on('loadFile', (e, d) => {
+    fs.readFile(d.path, 'utf-8', (err, data) => {
+        e.sender.send('fileLoaded', { data: data })
+    })
+})
+
+ipcMain.on('saveFile', (e, d) => {
+    fs.writeFile(d.path, d.content, (err, d) => {})
 })

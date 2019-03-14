@@ -189,12 +189,12 @@ html,
     display: inline-block;
 }
 
-.side-bar__icon#menu {
+.side-bar__item#menu .side-bar__icon {
     mask: url('./../icons/menu.svg') no-repeat 50% 50%;
     -webkit-mask: url('./../icons/menu.svg') no-repeat 50% 50%;
 }
 
-.side-bar__icon#settings {
+.side-bar__item#settings .side-bar__icon {
     mask: url('./../icons/settings.svg') no-repeat 50% 50%;
     -webkit-mask: url('./../icons/settings.svg') no-repeat 50% 50%;
 }
@@ -236,4 +236,6 @@ html,
     font-family: monospace;
     font-size: 1.4em;
     line-height: 1.4em;
+    resize: none;
+    background: transparent;
 }
