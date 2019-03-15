@@ -37,7 +37,7 @@ class EditorStore extends Store {
             case START_LOAD_FILE_ACTION:
                 return { ...state, isLoadingFile: true, contents: '' }
             case DONE_LOAD_FILE_ACTION:
-                return { ...state, isLoadingFile: false }
+                return { ...state, isLoadingFile: false, isEditorDirty: false }
             case CHUNK_LOAD_FILE_ACTION:
                 return {
                     ...state,
