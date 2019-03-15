@@ -95,10 +95,14 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('newFileCreated', (e, d) => {
+            const textToStart = !this.editorStore.getState().filePath
+                ? this.codem.getValue()
+                : ''
+            this.editorStore.getState().filePath && this.codem.setValue('')
             this.dispatcher.dispatch(setFilePathAction(d.path))
             ipcRenderer.send('saveFile', {
                 path: this.editorStore.getState().filePath,
-                content: this.codem.getValue() || ''
+                content: textToStart
             })
         })
     }
