@@ -4,8 +4,9 @@ import {
     DONE_LOAD_FILE_ACTION,
     CHUNK_LOAD_FILE_ACTION,
     FILE_CONTENT_CHANGE_ACTION,
-    START_FILE_SAVE,
-    DONE_FILE_SAVE
+    START_FILE_SAVE_ACTION,
+    DONE_FILE_SAVE_ACTION,
+    SET_FILE_ACTION
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -32,9 +33,14 @@ export const fileContentChangeAction = () => ({
 })
 
 export const startSaveFileAction = () => ({
-    type: START_FILE_SAVE
+    type: START_FILE_SAVE_ACTION
 })
 
 export const doneSaveFileAction = () => ({
-    type: DONE_FILE_SAVE
+    type: DONE_FILE_SAVE_ACTION
+})
+
+export const setFilePathAction = path => ({
+    type: SET_FILE_ACTION,
+    payload: { path }
 })

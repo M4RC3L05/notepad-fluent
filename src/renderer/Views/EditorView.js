@@ -7,8 +7,10 @@ import {
     doneLoadFileAction,
     fileContentChangeAction,
     doneSaveFileAction,
-    startSaveFileAction
+    startSaveFileAction,
+    setFilePathAction
 } from '../actions'
+import { basename } from 'path'
 
 class EditorView extends View {
     constructor(props) {
@@ -67,10 +69,14 @@ class EditorView extends View {
             this.dispatcher.dispatch(fileContentChangeAction())
         })
 
+        this.dispatcher.dispatch(
+            setFilePathAction(
+                'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt'
+            )
+        )
         this.dispatcher.dispatch(startLoadFileAction())
         ipcRenderer.send('loadFile', {
-            path:
-                'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt'
+            path: this.editorStore.getState().filePath
         })
         ipcRenderer.on('fileLoadChunk', (e, d) => {
             this.codem.replaceRange(
@@ -86,6 +92,11 @@ class EditorView extends View {
 
     render() {
         const editroState = this.editorStore.getState()
+        if (editroState.filePath) {
+            editroState.isEditorDirty
+                ? (document.title = `${editroState.filePath} *`)
+                : (document.title = editroState.filePath)
+        }
     }
 }
 
