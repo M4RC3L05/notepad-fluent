@@ -1,7 +1,7 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
-import '../lib/codemirror/codemirror.css'
-import codemirror from '../lib/codemirror/codemirror'
+import 'codemirror/lib/codemirror.css'
+import codemirror from 'codemirror/lib/codemirror'
 
 class EditorView extends View {
     constructor(props) {
