@@ -4,7 +4,6 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
-import Container from '../common/Container'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -13,6 +12,8 @@ let mainWindow
 
 function createMainWindow() {
     const window = new BrowserWindow({
+        frame: false,
+        titleBarStyle: 'customButtonsOnHover',
         webPreferences: {
             nodeIntegration: true
         }
