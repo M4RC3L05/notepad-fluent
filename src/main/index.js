@@ -4,6 +4,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
+import Container from '../common/Container'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -69,10 +70,37 @@ app.on('ready', () => {
     mainWindow = createMainWindow()
 })
 
+let currReadStream = null
+
 ipcMain.on('loadFile', (e, d) => {
-    fs.readFile(d.path, 'utf-8', (err, data) => {
-        e.sender.send('fileLoaded', { data: data })
+    if (currReadStream) {
+        currReadStream.destroy()
+        currReadStream = null
+    }
+    currReadStream = fs.createReadStream(d.path, {
+        encoding: 'utf8',
+        highWaterMark: 4 * 1024
     })
+
+    currReadStream
+        .on('data', data => {
+            // console.log('==============')
+            // console.log(d)
+            // console.log('==============')
+            e.sender.send('fileLoadChunk', { data })
+        })
+        .on('close', () => {
+            e.sender.send('fileLoadDone', { success: true })
+        })
+
+    // fs.readFile(d.path, 'utf-8', (err, data) => {
+    //     e.sender.send('fileLoaded', { data: data })
+    // })
+})
+
+ipcMain.on('cancelLoad', () => {
+    if (currReadStream) currReadStream.destroy()
+    currReadStream = null
 })
 
 ipcMain.on('saveFile', (e, d) => {

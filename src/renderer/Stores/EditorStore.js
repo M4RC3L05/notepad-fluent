@@ -1,4 +1,9 @@
 import Store from './Store'
+import {
+    START_LOAD_FILE_ACTION,
+    DONE_LOAD_FILE_ACTION,
+    CHUNK_LOAD_FILE_ACTION
+} from '../actions/types'
 
 class EditorStore extends Store {
     constructor() {
@@ -12,7 +17,8 @@ class EditorStore extends Store {
     getInitialState() {
         return {
             isPerformingAction: false,
-            actionMessage: ''
+            actionMessage: '',
+            contents: ''
         }
     }
 
@@ -22,6 +28,15 @@ class EditorStore extends Store {
 
     reduce(state, action) {
         switch (action.type) {
+            case START_LOAD_FILE_ACTION:
+                return { ...state, isPerformingAction: true, contents: '' }
+            case DONE_LOAD_FILE_ACTION:
+                return { ...state, isPerformingAction: false }
+            case CHUNK_LOAD_FILE_ACTION:
+                return {
+                    ...state,
+                    contents: state.contents + action.payload.chunk
+                }
             default:
                 return state
         }

@@ -1,11 +1,25 @@
-import { TOGGLE_SIDEBAR, START_EDITOR_ACTION } from './types'
-import { IpcRenderer } from 'electron'
+import {
+    TOGGLE_SIDEBAR,
+    START_LOAD_FILE_ACTION,
+    DONE_LOAD_FILE_ACTION,
+    CHUNK_LOAD_FILE_ACTION
+} from './types'
 
 export const toggleSideBarAction = () => ({
     type: TOGGLE_SIDEBAR
 })
 
-export const startAction = (msg = '') => ({
-    type: START_EDITOR_ACTION,
-    payload: { msg }
+export const startLoadFileAction = () => ({
+    type: START_LOAD_FILE_ACTION
+})
+
+export const doneLoadFileAction = () => ({
+    type: DONE_LOAD_FILE_ACTION
+})
+
+export const chuckLoadFileAction = chunk => ({
+    type: CHUNK_LOAD_FILE_ACTION,
+    payload: {
+        chunk
+    }
 })

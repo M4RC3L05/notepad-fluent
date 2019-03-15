@@ -2,6 +2,11 @@ import View from './View'
 import { ipcRenderer } from 'electron'
 import 'codemirror/lib/codemirror.css'
 import codemirror from 'codemirror/lib/codemirror'
+import {
+    startLoadFileAction,
+    doneLoadFileAction,
+    chuckLoadFileAction
+} from '../actions'
 
 class EditorView extends View {
     constructor(props) {
@@ -49,16 +54,25 @@ class EditorView extends View {
                 })
             }
         })
+
+        this.dispatcher.dispatch(startLoadFileAction())
         ipcRenderer.send('loadFile', {
             path:
                 'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt'
         })
-        ipcRenderer.on('fileLoaded', (e, d) => {
-            this.codem.doc.setValue(d.data)
+        ipcRenderer.on('fileLoadChunk', (e, d) => {
+            this.dispatcher.dispatch(chuckLoadFileAction(d.data))
+        })
+
+        ipcRenderer.on('fileLoadDone', (e, d) => {
+            this.dispatcher.dispatch(doneLoadFileAction())
         })
     }
 
-    render() {}
+    render() {
+        const editroState = this.editorStore.getState()
+        this.codem.doc.setValue(editroState.contents)
+    }
 }
 
 export default EditorView
