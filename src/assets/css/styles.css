@@ -194,6 +194,11 @@ html,
     -webkit-mask: url('./../icons/menu.svg') no-repeat 50% 50%;
 }
 
+.side-bar__item#file .side-bar__icon {
+    mask: url('./../icons/file.svg') no-repeat 50% 50%;
+    -webkit-mask: url('./../icons/file.svg') no-repeat 50% 50%;
+}
+
 .side-bar__item#settings .side-bar__icon {
     mask: url('./../icons/settings.svg') no-repeat 50% 50%;
     -webkit-mask: url('./../icons/settings.svg') no-repeat 50% 50%;

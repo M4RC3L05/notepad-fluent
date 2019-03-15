@@ -74,6 +74,7 @@ class EditorView extends View {
                 'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt'
             )
         )
+        this.codem.setValue('')
         this.dispatcher.dispatch(startLoadFileAction())
         ipcRenderer.send('loadFile', {
             path: this.editorStore.getState().filePath
@@ -97,6 +98,8 @@ class EditorView extends View {
                 ? (document.title = `${editroState.filePath} *`)
                 : (document.title = editroState.filePath)
         }
+
+        // this.codem.
     }
 }
 

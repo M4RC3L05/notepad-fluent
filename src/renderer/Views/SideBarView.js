@@ -30,6 +30,7 @@ class SideBarView extends View {
 
     setUpUI() {
         this.navToggler = document.querySelector('.side-bar__item#menu')
+        this.openFileBtn = document.querySelector('.side-bar__item#file')
         this.sidebar = document.querySelector('.side-bar')
     }
 
@@ -37,6 +38,10 @@ class SideBarView extends View {
         this.navToggler.addEventListener('click', () =>
             this.dispatcher.dispatch(toggleSideBarAction())
         )
+
+        this.openFileBtn.addEventListener('click', () => {
+            console.log('opening')
+        })
     }
 
     render() {
