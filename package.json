@@ -5,7 +5,9 @@
     "scripts": {
         "start": "electron .",
         "dev": "electron-webpack dev",
-        "compile": "electron-webpack"
+        "compile": "electron-webpack",
+        "prebuild": "yarn compile",
+        "build": "electron-builder"
     },
     "author": "M4RC3L05",
     "license": "MIT",
