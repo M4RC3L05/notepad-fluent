@@ -6,7 +6,8 @@ import {
     FILE_CONTENT_CHANGE_ACTION,
     START_FILE_SAVE_ACTION,
     DONE_FILE_SAVE_ACTION,
-    SET_FILE_ACTION
+    SET_FILE_ACTION,
+    CHANGE_TITLE_BAR_TITLE_ACTION
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -43,4 +44,11 @@ export const doneSaveFileAction = () => ({
 export const setFilePathAction = path => ({
     type: SET_FILE_ACTION,
     payload: { path }
+})
+
+export const setNewTitleBarText = text => ({
+    type: CHANGE_TITLE_BAR_TITLE_ACTION,
+    payload: {
+        text
+    }
 })

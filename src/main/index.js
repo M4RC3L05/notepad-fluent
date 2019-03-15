@@ -13,7 +13,6 @@ let mainWindow
 function createMainWindow() {
     const window = new BrowserWindow({
         frame: false,
-        titleBarStyle: 'customButtonsOnHover',
         webPreferences: {
             nodeIntegration: true
         }

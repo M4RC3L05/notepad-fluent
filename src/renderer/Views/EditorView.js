@@ -8,7 +8,8 @@ import {
     fileContentChangeAction,
     doneSaveFileAction,
     startSaveFileAction,
-    setFilePathAction
+    setFilePathAction,
+    setNewTitleBarText
 } from '../actions'
 
 class EditorView extends View {
@@ -111,8 +112,12 @@ class EditorView extends View {
         const editroState = this.editorStore.getState()
         if (editroState.filePath) {
             editroState.isEditorDirty
-                ? (document.title = `${editroState.filePath} *`)
-                : (document.title = editroState.filePath)
+                ? this.dispatcher.dispatch(
+                      setNewTitleBarText(`* ${editroState.filePath}`)
+                  )
+                : this.dispatcher.dispatch(
+                      setNewTitleBarText(`${editroState.filePath}`)
+                  )
         }
     }
 }
