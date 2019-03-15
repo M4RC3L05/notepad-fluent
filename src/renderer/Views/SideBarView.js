@@ -48,7 +48,6 @@ class SideBarView extends View {
         )
 
         this.openFileBtn.addEventListener('click', () => {
-            console.log('opening')
             ipcRenderer.send('openFileDialog')
         })
 
