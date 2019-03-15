@@ -12,7 +12,7 @@ class TitleBarStore extends Store {
 
     getInitialState() {
         return {
-            titleBarText: 'NotepadFluent'
+            titleBarText: 'Notepad Fluent'
         }
     }
 

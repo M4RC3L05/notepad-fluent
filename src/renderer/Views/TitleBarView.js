@@ -1,4 +1,5 @@
 import View from './View'
+import { ipcRenderer } from 'electron'
 
 class TitleBarView extends View {
     constructor(props) {
@@ -43,20 +44,22 @@ class TitleBarView extends View {
 
                 switch (btnType) {
                     case 'close':
-                        console.log('close')
+                        ipcRenderer.send('close-app')
                         break
 
                     case 'minimise':
-                        console.log('minimise')
+                        ipcRenderer.send('minimise-app')
                         break
 
                     case 'maximise':
                     case 'decrease':
-                        console.log(btnType)
-
                         btnType === 'maximise'
-                            ? e.target.setAttribute('id', 'decrease')
-                            : e.target.setAttribute('id', 'maximise')
+                            ? (ipcRenderer.send('maximise-app'),
+                              e.target.setAttribute('id', 'decrease'))
+                            : (ipcRenderer.send('decrease-app'),
+                              e.target.setAttribute('id', 'maximise'))
+
+                        break
 
                     default:
                         return
@@ -70,7 +73,7 @@ class TitleBarView extends View {
         const titleBarState = this.titleBarStore.getState()
 
         if (sideBarState.isOpen) {
-            this.titlebarTitle.style.paddingLeft = '20px'
+            this.titlebarTitle.style.paddingLeft = '15px'
             this.titlebarTitle.style.width = '255px'
         } else {
             this.titlebarTitle.style.paddingLeft = '60px'

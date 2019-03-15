@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, remote } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
@@ -116,3 +116,8 @@ ipcMain.on('createFile', e => {
         e.sender.send('newFileCreated', { path: r })
     })
 })
+console.log(remote)
+ipcMain.on('minimise-app', () => mainWindow.minimize())
+ipcMain.on('maximise-app', () => mainWindow.maximize())
+ipcMain.on('decrease-app', () => mainWindow.restore())
+ipcMain.on('close-app', () => mainWindow.close())
