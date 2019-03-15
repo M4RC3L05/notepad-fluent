@@ -103,8 +103,16 @@ ipcMain.on('saveFile', (e, d) => {
 })
 
 ipcMain.on('openFileDialog', e => {
-    dialog.showOpenDialog(mainWindow, path => {
+    dialog.showOpenDialog({ properties: ['openFile'] }, path => {
         if (!path || path.length <= 0) return
         e.sender.send('newFileOpen', { path: path[0] })
+    })
+})
+
+ipcMain.on('createFile', e => {
+    dialog.showSaveDialog(r => {
+        if (!r) return
+
+        e.sender.send('newFileCreated', { path: r })
     })
 })

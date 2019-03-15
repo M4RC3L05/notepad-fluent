@@ -21,7 +21,6 @@ class EditorStore extends Store {
     getInitialState() {
         return {
             isLoadingFile: false,
-            isFileDoneLoad: false,
             actionMessage: '',
             filePath: '',
             isEditorDirty: false,

@@ -39,6 +39,7 @@ class SideBarView extends View {
     setUpUI() {
         this.navToggler = document.querySelector('.side-bar__item#menu')
         this.openFileBtn = document.querySelector('.side-bar__item#file')
+        this.addFileBtn = document.querySelector('.side-bar__item#add_file')
         this.sidebar = document.querySelector('.side-bar')
     }
 
@@ -48,15 +49,18 @@ class SideBarView extends View {
         )
 
         this.openFileBtn.addEventListener('click', () => {
+            const editorState = this.editorStore.getState()
+
+            if (editorState.isLoadingFile) return
             ipcRenderer.send('openFileDialog')
         })
 
-        ipcRenderer.on('newFileOpen', (e, d) => {
-            this.dispatcher.dispatch(setFilePathAction(d.path))
-            this.dispatcher.dispatch(startLoadFileAction())
-            ipcRenderer.send('loadFile', {
-                path: this.editorStore.getState().filePath
-            })
+        this.addFileBtn.addEventListener('click', e => {
+            const editorState = this.editorStore.getState()
+
+            if (editorState.isLoadingFile) return
+
+            ipcRenderer.send('createFile')
         })
     }
 

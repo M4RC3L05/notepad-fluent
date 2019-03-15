@@ -50,6 +50,12 @@ class EditorView extends View {
             if (e.keyCode === 83 && e.ctrlKey) {
                 const editorState = this.editorStore.getState()
                 if (!editorState.isEditorDirty) return
+
+                if (!editorState.filePath) {
+                    ipcRenderer.send('createFile')
+                    return
+                }
+
                 this.dispatcher.dispatch(startSaveFileAction())
                 ipcRenderer.send('saveFile', {
                     path: editorState.filePath,
@@ -78,6 +84,23 @@ class EditorView extends View {
         ipcRenderer.on('fileLoadDone', (e, d) => {
             this.dispatcher.dispatch(doneLoadFileAction())
         })
+
+        ipcRenderer.on('newFileOpen', (e, d) => {
+            this.codem.setValue('')
+            this.dispatcher.dispatch(setFilePathAction(d.path))
+            this.dispatcher.dispatch(startLoadFileAction())
+            ipcRenderer.send('loadFile', {
+                path: this.editorStore.getState().filePath
+            })
+        })
+
+        ipcRenderer.on('newFileCreated', (e, d) => {
+            this.dispatcher.dispatch(setFilePathAction(d.path))
+            ipcRenderer.send('saveFile', {
+                path: this.editorStore.getState().filePath,
+                content: this.codem.getValue() || ''
+            })
+        })
     }
 
     render() {
@@ -87,8 +110,6 @@ class EditorView extends View {
                 ? (document.title = `${editroState.filePath} *`)
                 : (document.title = editroState.filePath)
         }
-
-        editroState.isLoadingFile && this.codem.setValue('')
     }
 }
 
