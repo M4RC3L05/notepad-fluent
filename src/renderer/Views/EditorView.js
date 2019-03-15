@@ -1,11 +1,13 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
 import 'codemirror/lib/codemirror.css'
-import codemirror from 'codemirror/lib/codemirror'
+import Codemirror from 'codemirror/lib/codemirror'
 import {
     startLoadFileAction,
     doneLoadFileAction,
-    chuckLoadFileAction
+    fileContentChangeAction,
+    doneSaveFileAction,
+    startSaveFileAction
 } from '../actions'
 
 class EditorView extends View {
@@ -37,7 +39,7 @@ class EditorView extends View {
 
     setUpUI() {
         this.editor = document.querySelector('#editor')
-        this.codem = codemirror.fromTextArea(this.editor, {
+        this.codem = Codemirror.fromTextArea(this.editor, {
             mode: ''
         })
     }
@@ -45,8 +47,8 @@ class EditorView extends View {
     setUpListeners() {
         this.codem.on('keydown', (cm, e) => {
             if (e.keyCode === 83 && e.ctrlKey) {
-                console.log('saving')
-
+                if (!this.editorStore.getState().isEditorDirty) return
+                this.dispatcher.dispatch(startSaveFileAction())
                 ipcRenderer.send('saveFile', {
                     path:
                         'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt',
@@ -55,13 +57,26 @@ class EditorView extends View {
             }
         })
 
+        ipcRenderer.on('saveFileDone', () => {
+            this.dispatcher.dispatch(doneSaveFileAction())
+        })
+
+        this.codem.on('change', (cm, e) => {
+            const editoState = this.editorStore.getState()
+            if (editoState.isLoadingFile) return
+            this.dispatcher.dispatch(fileContentChangeAction())
+        })
+
         this.dispatcher.dispatch(startLoadFileAction())
         ipcRenderer.send('loadFile', {
             path:
                 'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt'
         })
         ipcRenderer.on('fileLoadChunk', (e, d) => {
-            this.dispatcher.dispatch(chuckLoadFileAction(d.data))
+            this.codem.replaceRange(
+                d.data,
+                Codemirror.Pos(this.codem.lastLine())
+            )
         })
 
         ipcRenderer.on('fileLoadDone', (e, d) => {
@@ -71,7 +86,6 @@ class EditorView extends View {
 
     render() {
         const editroState = this.editorStore.getState()
-        this.codem.doc.setValue(editroState.contents)
     }
 }
 

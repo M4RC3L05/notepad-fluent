@@ -104,5 +104,7 @@ ipcMain.on('cancelLoad', () => {
 })
 
 ipcMain.on('saveFile', (e, d) => {
-    fs.writeFile(d.path, d.content, (err, d) => {})
+    fs.writeFile(d.path, d.content, (err, d) => {
+        e.sender.send('saveFileDone')
+    })
 })
