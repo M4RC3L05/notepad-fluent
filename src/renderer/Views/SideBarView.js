@@ -1,9 +1,5 @@
 import View from './View'
-import {
-    toggleSideBarAction,
-    setFilePathAction,
-    startLoadFileAction
-} from '../actions'
+import { toggleSideBarAction } from '../actions'
 import { ipcRenderer } from 'electron'
 
 class SideBarView extends View {
