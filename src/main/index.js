@@ -116,7 +116,7 @@ ipcMain.on('createFile', e => {
         e.sender.send('newFileCreated', { path: r })
     })
 })
-console.log(remote)
+
 ipcMain.on('minimise-app', () => mainWindow.minimize())
 ipcMain.on('maximise-app', () => mainWindow.maximize())
 ipcMain.on('decrease-app', () => mainWindow.restore())
