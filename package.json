@@ -19,8 +19,6 @@
     },
     "dependencies": {
         "codemirror": "^5.44.0",
-        "monaco-editor": "^0.16.1",
-        "monaco-editor-webpack-plugin": "^1.7.0",
         "source-map-support": "^0.5.11"
     }
 }
