@@ -33,7 +33,7 @@ class EditorView extends View {
     setUpUI() {
         this.editor = document.querySelector('#editor')
         this.codem = codemirror.fromTextArea(this.editor, {
-            mode: 'javascript'
+            mode: ''
         })
     }
 
