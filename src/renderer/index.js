@@ -1,10 +1,10 @@
 import './../assets/css/styles.css'
-import Container from './Container'
 import Dispatcher from './Dispatcher'
 import SideBarView from './Views/SideBarView'
 import SideBarStore from './Stores/SideBarStore'
 import EditorView from './Views/EditorView'
 import EditorStore from './Stores/EditorStore'
+import Container from '../common/Container'
 
 const start = () => {
     const container = Container.getInstance()
