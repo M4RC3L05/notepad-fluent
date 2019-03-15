@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
@@ -84,18 +84,11 @@ ipcMain.on('loadFile', (e, d) => {
 
     currReadStream
         .on('data', data => {
-            // console.log('==============')
-            // console.log(d)
-            // console.log('==============')
             e.sender.send('fileLoadChunk', { data })
         })
         .on('close', () => {
             e.sender.send('fileLoadDone', { success: true })
         })
-
-    // fs.readFile(d.path, 'utf-8', (err, data) => {
-    //     e.sender.send('fileLoaded', { data: data })
-    // })
 })
 
 ipcMain.on('cancelLoad', () => {
@@ -106,5 +99,12 @@ ipcMain.on('cancelLoad', () => {
 ipcMain.on('saveFile', (e, d) => {
     fs.writeFile(d.path, d.content, (err, d) => {
         e.sender.send('saveFileDone')
+    })
+})
+
+ipcMain.on('openFileDialog', e => {
+    dialog.showOpenDialog(mainWindow, path => {
+        if (!path || path.length <= 0) return
+        e.sender.send('newFileOpen', { path: path[0] })
     })
 })

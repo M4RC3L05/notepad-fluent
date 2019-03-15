@@ -16,7 +16,8 @@ const start = () => {
 
     SideBarView.create({
         dispatcher: container.get('Dispatcher'),
-        sideBarStore: container.get('SideBarStore')
+        sideBarStore: container.get('SideBarStore'),
+        editorStore: container.get('EditorStore')
     })
 
     EditorView.create({

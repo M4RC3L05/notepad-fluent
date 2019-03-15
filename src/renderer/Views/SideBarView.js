@@ -1,5 +1,10 @@
 import View from './View'
-import { toggleSideBarAction } from '../actions'
+import {
+    toggleSideBarAction,
+    setFilePathAction,
+    startLoadFileAction
+} from '../actions'
+import { ipcRenderer } from 'electron'
 
 class SideBarView extends View {
     constructor(props) {
@@ -7,6 +12,7 @@ class SideBarView extends View {
 
         this.dispatcher = props.dispatcher
         this.sideBarStore = props.sideBarStore
+        this.editorStore = props.editorStore
 
         this.setUpDependencies = this.setUpDependencies.bind(this)
         this.setUpUI = this.setUpUI.bind(this)
@@ -25,7 +31,9 @@ class SideBarView extends View {
 
     setUpDependencies() {
         this.sideBarStore.subscribe(this)
+        this.editorStore.subscribe(this)
         this.dispatcher.subscribe(this.sideBarStore)
+        this.dispatcher.subscribe(this.editorStore)
     }
 
     setUpUI() {
@@ -41,6 +49,15 @@ class SideBarView extends View {
 
         this.openFileBtn.addEventListener('click', () => {
             console.log('opening')
+            ipcRenderer.send('openFileDialog')
+        })
+
+        ipcRenderer.on('newFileOpen', (e, d) => {
+            this.dispatcher.dispatch(setFilePathAction(d.path))
+            this.dispatcher.dispatch(startLoadFileAction())
+            ipcRenderer.send('loadFile', {
+                path: this.editorStore.getState().filePath
+            })
         })
     }
 

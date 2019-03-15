@@ -10,7 +10,6 @@ import {
     startSaveFileAction,
     setFilePathAction
 } from '../actions'
-import { basename } from 'path'
 
 class EditorView extends View {
     constructor(props) {
@@ -49,11 +48,11 @@ class EditorView extends View {
     setUpListeners() {
         this.codem.on('keydown', (cm, e) => {
             if (e.keyCode === 83 && e.ctrlKey) {
-                if (!this.editorStore.getState().isEditorDirty) return
+                const editorState = this.editorStore.getState()
+                if (!editorState.isEditorDirty) return
                 this.dispatcher.dispatch(startSaveFileAction())
                 ipcRenderer.send('saveFile', {
-                    path:
-                        'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt',
+                    path: editorState.filePath,
                     content: cm.getValue()
                 })
             }
@@ -69,16 +68,6 @@ class EditorView extends View {
             this.dispatcher.dispatch(fileContentChangeAction())
         })
 
-        this.dispatcher.dispatch(
-            setFilePathAction(
-                'C:\\Users\\joaob\\Desktop\\DevInProg\\notepad-fluent\\abc.txt'
-            )
-        )
-        this.codem.setValue('')
-        this.dispatcher.dispatch(startLoadFileAction())
-        ipcRenderer.send('loadFile', {
-            path: this.editorStore.getState().filePath
-        })
         ipcRenderer.on('fileLoadChunk', (e, d) => {
             this.codem.replaceRange(
                 d.data,
@@ -99,7 +88,7 @@ class EditorView extends View {
                 : (document.title = editroState.filePath)
         }
 
-        // this.codem.
+        editroState.isLoadingFile && this.codem.setValue('')
     }
 }
 
