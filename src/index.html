@@ -10,6 +10,9 @@
                 width: 100%;
                 height: 100%;
                 padding-top: 30px;
+                flex: 1;
+                width: 0;
+                height: 100%;
             }
 
             .CodeMirror pre {
@@ -36,35 +39,29 @@
                 </div>
             </div>
         </div>
-        <div id="app">
-            <div class="side-bar">
-                <div class="side-bar__item" id="menu">
-                    <div class="side-bar__icon"></div>
-                </div>
-                <div class="side-bar__item" id="add_file">
-                    <div class="side-bar__icon"></div>
-                    <div class="side-bar__description">
-                        New File
-                    </div>
-                </div>
-                <div class="side-bar__item" id="file">
-                    <div class="side-bar__icon"></div>
-                    <div class="side-bar__description">
-                        Open File
-                    </div>
-                </div>
-                <div
-                    class="side-bar__item"
-                    style="margin-top: auto"
-                    id="settings"
-                >
-                    <div class="side-bar__icon"></div>
-                    <div class="side-bar__description">
-                        Settings
-                    </div>
+        <div class="side-bar">
+            <div class="side-bar__item" id="menu">
+                <div class="side-bar__icon"></div>
+            </div>
+            <div class="side-bar__item" id="add_file">
+                <div class="side-bar__icon"></div>
+                <div class="side-bar__description">
+                    New File
                 </div>
             </div>
-            <textarea id="editor"></textarea>
+            <div class="side-bar__item" id="file">
+                <div class="side-bar__icon"></div>
+                <div class="side-bar__description">
+                    Open File
+                </div>
+            </div>
+            <div class="side-bar__item" style="margin-top: auto" id="settings">
+                <div class="side-bar__icon"></div>
+                <div class="side-bar__description">
+                    Settings
+                </div>
+            </div>
         </div>
+        <textarea id="editor"></textarea>
     </body>
 </html>
