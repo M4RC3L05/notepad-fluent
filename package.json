@@ -3,20 +3,26 @@
     "version": "1.0.0",
     "description": "A notepad app with fluent design",
     "scripts": {
-        "start": "electron .",
-        "dev": "electron-webpack dev",
-        "compile": "electron-webpack",
+        "dev": "cross-env NODE_ENV=development electron-webpack dev",
+        "compile": "cross-env NODE_ENV=production electron-webpack",
         "prebuild": "yarn compile",
-        "build": "electron-builder"
+        "build": "cross-env NODE_ENV=production electron-builder",
+        "test": "jest"
     },
     "author": "M4RC3L05",
     "license": "MIT",
     "devDependencies": {
+        "@babel/core": "^7.3.4",
         "@babel/plugin-proposal-class-properties": "^7.3.4",
+        "@babel/preset-env": "^7.3.4",
+        "cross-env": "^5.2.0",
         "electron": "^4.0.8",
         "electron-builder": "^20.39.0",
         "electron-webpack": "^2.6.2",
         "html-webpack-plugin": "^3.2.0",
+        "jest": "^24.5.0",
+        "jest-css-modules": "^1.1.0",
+        "jest-dom": "^3.1.3",
         "webpack": "^4.29.6"
     },
     "dependencies": {
