@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
-console.log(process.env.NODE_ENV)
+const isDev = process.env.NODE_ENV !== 'production'
 
 module.exports = {
     target: 'web',
@@ -8,5 +9,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/index.html'
         })
-    ]
+    ],
+
+    optimization: !isDev
+        ? {
+              minimizer: [new OptimizeCSSAssetsPlugin({})]
+          }
+        : {}
 }
