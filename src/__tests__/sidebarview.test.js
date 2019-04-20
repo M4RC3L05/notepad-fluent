@@ -12,9 +12,14 @@ jest.mock('electron', () => ({
     }
 }))
 
-describe('Side-Bar tests', () => {
+describe('SideBar tests', () => {
     beforeEach(() => {
         document.documentElement.innerHTML = getMarkup()
+        SideBarView.create({
+            dispatcher: Dispatcher.create(),
+            sideBarStore: SideBarStore.create(),
+            editorStore: EditorStore.create()
+        })
     })
 
     afterEach(() => {
@@ -22,12 +27,6 @@ describe('Side-Bar tests', () => {
     })
 
     it('should toggle side bar', () => {
-        SideBarView.create({
-            dispatcher: Dispatcher.create(),
-            sideBarStore: SideBarStore.create(),
-            editorStore: EditorStore.create()
-        })
-
         const sideBar = document.querySelector('.side-bar')
         const menuBtn = sideBar.querySelector('.side-bar__item#menu')
         expect(sideBar).not.toHaveClass('open')
@@ -38,12 +37,6 @@ describe('Side-Bar tests', () => {
     })
 
     it('Should call ipcRenderer send method to create a new file dialog', () => {
-        SideBarView.create({
-            dispatcher: Dispatcher.create(),
-            sideBarStore: SideBarStore.create(),
-            editorStore: EditorStore.create()
-        })
-
         const sideBar = document.querySelector('.side-bar')
         const newFileBtn = sideBar.querySelector('.side-bar__item#add_file')
 
@@ -54,12 +47,6 @@ describe('Side-Bar tests', () => {
     })
 
     it('Should call ipcRenderer send method to open a new file dialog', () => {
-        SideBarView.create({
-            dispatcher: Dispatcher.create(),
-            sideBarStore: SideBarStore.create(),
-            editorStore: EditorStore.create()
-        })
-
         const sideBar = document.querySelector('.side-bar')
         const openFileBtn = sideBar.querySelector('.side-bar__item#file')
 

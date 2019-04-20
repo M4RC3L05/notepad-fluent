@@ -52,13 +52,13 @@ class TitleBarView extends View {
                         break
 
                     case 'maximise':
-                    case 'decrease':
-                        btnType === 'maximise'
-                            ? (ipcRenderer.send('maximise-app'),
-                              e.target.setAttribute('id', 'decrease'))
-                            : (ipcRenderer.send('decrease-app'),
-                              e.target.setAttribute('id', 'maximise'))
+                        ipcRenderer.send('maximise-app')
+                        e.target.setAttribute('id', 'decrease')
+                        break
 
+                    case 'decrease':
+                        ipcRenderer.send('decrease-app')
+                        e.target.setAttribute('id', 'maximise')
                         break
 
                     default:
