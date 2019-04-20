@@ -1,5 +1,5 @@
 import View from './View'
-import { toggleSideBarAction } from '../actions'
+import { toggleSideBarAction, cancelFileLoad } from '../actions'
 import { ipcRenderer } from 'electron'
 
 class SideBarView extends View {
@@ -45,17 +45,14 @@ class SideBarView extends View {
         )
 
         this.openFileBtn.addEventListener('click', () => {
-            const editorState = this.editorStore.getState()
-
-            if (editorState.isLoadingFile) return
+            this.dispatcher.dispatch(cancelFileLoad())
+            ipcRenderer.send('cancelLoad')
             ipcRenderer.send('openFileDialog')
         })
 
         this.addFileBtn.addEventListener('click', e => {
-            const editorState = this.editorStore.getState()
-
-            if (editorState.isLoadingFile) return
-
+            this.dispatcher.dispatch(cancelFileLoad())
+            ipcRenderer.send('cancelLoad')
             ipcRenderer.send('createFile')
         })
     }

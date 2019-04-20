@@ -76,10 +76,12 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('fileLoadChunk', (e, d) => {
-            this.codem.replaceRange(
-                d.data,
-                Codemirror.Pos(this.codem.lastLine())
-            )
+            const editoState = this.editorStore.getState()
+            if (editoState.isLoadingFile)
+                this.codem.replaceRange(
+                    d.data,
+                    Codemirror.Pos(this.codem.lastLine())
+                )
         })
 
         ipcRenderer.on('fileLoadDone', (e, d) => {

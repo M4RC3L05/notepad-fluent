@@ -4,6 +4,8 @@ import { app, BrowserWindow, ipcMain, dialog, remote } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
+import { debounce } from 'lodash'
+import Throttle from 'throttle'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -77,18 +79,18 @@ ipcMain.on('loadFile', (e, d) => {
         currReadStream.destroy()
         currReadStream = null
     }
-    currReadStream = fs.createReadStream(d.path, {
-        encoding: 'utf8',
-        highWaterMark: 4 * 1024
-    })
+    currReadStream = fs
+        .createReadStream(d.path, {
+            encoding: 'utf8'
+        })
+        .pipe(new Throttle(1024 * 1024 * 2))
 
     currReadStream
         .on('data', data => {
-            e.sender.send('fileLoadChunk', { data })
+            e.sender.send('fileLoadChunk', { data: data.toString() })
         })
-        .on('close', () => {
-            e.sender.send('fileLoadDone', { success: true })
-        })
+        .on('error', () => e.sender.send('fileLoadDone', { success: false }))
+        .on('end', () => e.sender.send('fileLoadDone', { success: true }))
 })
 
 ipcMain.on('cancelLoad', () => {

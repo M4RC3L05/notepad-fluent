@@ -6,7 +6,8 @@ import {
     FILE_CONTENT_CHANGE_ACTION,
     START_FILE_SAVE_ACTION,
     DONE_FILE_SAVE_ACTION,
-    SET_FILE_ACTION
+    SET_FILE_ACTION,
+    CANCEL_FILE_LOAD
 } from '../actions/types'
 
 class EditorStore extends Store {
@@ -34,8 +35,19 @@ class EditorStore extends Store {
 
     reduce(state, action) {
         switch (action.type) {
+            case CANCEL_FILE_LOAD:
+                return {
+                    ...state,
+                    isLoadingFile: false,
+                    isEditorDirty: false,
+                    isSavingFile: false
+                }
             case START_LOAD_FILE_ACTION:
-                return { ...state, isLoadingFile: true, contents: '' }
+                return {
+                    ...state,
+                    isLoadingFile: true,
+                    isEditorDirty: false
+                }
             case DONE_LOAD_FILE_ACTION:
                 return { ...state, isLoadingFile: false, isEditorDirty: false }
             case CHUNK_LOAD_FILE_ACTION:

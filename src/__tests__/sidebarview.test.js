@@ -42,7 +42,8 @@ describe('SideBar tests', () => {
 
         expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(0)
         newFileBtn.click()
-        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(1)
+        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(2)
+        expect(electron.ipcRenderer.send).toHaveBeenCalledWith('cancelLoad')
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('createFile')
     })
 
@@ -52,7 +53,8 @@ describe('SideBar tests', () => {
 
         expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(0)
         openFileBtn.click()
-        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(1)
+        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(2)
+        expect(electron.ipcRenderer.send).toHaveBeenCalledWith('cancelLoad')
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('openFileDialog')
     })
 })

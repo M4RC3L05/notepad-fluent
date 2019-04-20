@@ -7,7 +7,8 @@ import {
     START_FILE_SAVE_ACTION,
     DONE_FILE_SAVE_ACTION,
     SET_FILE_ACTION,
-    CHANGE_TITLE_BAR_TITLE_ACTION
+    CHANGE_TITLE_BAR_TITLE_ACTION,
+    CANCEL_FILE_LOAD
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -28,6 +29,8 @@ export const chuckLoadFileAction = chunk => ({
         chunk
     }
 })
+
+export const cancelFileLoad = () => ({ type: CANCEL_FILE_LOAD })
 
 export const fileContentChangeAction = () => ({
     type: FILE_CONTENT_CHANGE_ACTION
