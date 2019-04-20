@@ -4,7 +4,6 @@ import { app, BrowserWindow, ipcMain, dialog, remote } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
-import { debounce } from 'lodash'
 import Throttle from 'throttle'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
