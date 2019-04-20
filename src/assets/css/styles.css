@@ -214,6 +214,17 @@ html {
     mask-size: 17px;
 }
 
+.side-bar__item#close_file {
+    display: none;
+}
+
+.side-bar__item#close_file .side-bar__icon {
+    mask: url('./../icons/close_file.svg') no-repeat 50% 50%;
+    -webkit-mask: url('./../icons/close_file.svg') no-repeat 50% 50%;
+    -webkit-mask-size: 14px;
+    mask-size: 14px;
+}
+
 .side-bar__item .side-bar__description {
     height: 50px;
     position: absolute;

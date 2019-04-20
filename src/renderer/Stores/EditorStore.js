@@ -7,7 +7,10 @@ import {
     START_FILE_SAVE_ACTION,
     DONE_FILE_SAVE_ACTION,
     SET_FILE_ACTION,
-    CANCEL_FILE_LOAD
+    CANCEL_FILE_LOAD,
+    NEW_FILE,
+    TOGGLE_SHOULD_EDITOR_RESET,
+    CLOSE_OPEN_FILE
 } from '../actions/types'
 
 class EditorStore extends Store {
@@ -25,7 +28,9 @@ class EditorStore extends Store {
             actionMessage: '',
             filePath: '',
             isEditorDirty: false,
-            isSavingFile: false
+            isSavingFile: false,
+            shouldResetEditor: false,
+            hasFile: false
         }
     }
 
@@ -35,6 +40,15 @@ class EditorStore extends Store {
 
     reduce(state, action) {
         switch (action.type) {
+            case NEW_FILE:
+                return {
+                    ...state,
+                    isLoadingFile: false,
+                    isEditorDirty: true,
+                    isSavingFile: false,
+                    filePath: 'Untitled'
+                }
+
             case CANCEL_FILE_LOAD:
                 return {
                     ...state,
@@ -42,32 +56,63 @@ class EditorStore extends Store {
                     isEditorDirty: false,
                     isSavingFile: false
                 }
+
             case START_LOAD_FILE_ACTION:
                 return {
                     ...state,
                     isLoadingFile: true,
                     isEditorDirty: false
                 }
+
             case DONE_LOAD_FILE_ACTION:
-                return { ...state, isLoadingFile: false, isEditorDirty: false }
+                return {
+                    ...state,
+                    isLoadingFile: false,
+                    isEditorDirty: false,
+                    hasFile: true
+                }
+
             case CHUNK_LOAD_FILE_ACTION:
                 return {
                     ...state,
                     contents: state.contents + action.payload.chunk
                 }
+
             case FILE_CONTENT_CHANGE_ACTION:
                 return { ...state, isEditorDirty: true }
 
             case START_FILE_SAVE_ACTION:
                 return { ...state, isSavingFile: true }
+
             case DONE_FILE_SAVE_ACTION:
                 return {
                     ...state,
                     isSavingFile: false,
-                    isEditorDirty: false
+                    isEditorDirty: false,
+                    hasFile: true
                 }
+
             case SET_FILE_ACTION:
-                return { ...state, filePath: action.payload.path }
+                return {
+                    ...state,
+                    filePath: action.payload.path,
+                    hasFile: true
+                }
+
+            case TOGGLE_SHOULD_EDITOR_RESET:
+                return { ...state, shouldResetEditor: action.payload }
+
+            case CLOSE_OPEN_FILE:
+                return {
+                    isLoadingFile: false,
+                    actionMessage: '',
+                    filePath: '',
+                    isEditorDirty: false,
+                    isSavingFile: false,
+                    shouldResetEditor: true,
+                    hasFile: false
+                }
+
             default:
                 return state
         }

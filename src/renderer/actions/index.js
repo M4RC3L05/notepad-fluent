@@ -8,7 +8,10 @@ import {
     DONE_FILE_SAVE_ACTION,
     SET_FILE_ACTION,
     CHANGE_TITLE_BAR_TITLE_ACTION,
-    CANCEL_FILE_LOAD
+    CANCEL_FILE_LOAD,
+    NEW_FILE,
+    TOGGLE_SHOULD_EDITOR_RESET,
+    CLOSE_OPEN_FILE
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -54,4 +57,17 @@ export const setNewTitleBarText = text => ({
     payload: {
         text
     }
+})
+
+export const newFile = () => ({
+    type: NEW_FILE
+})
+
+export const toggleShouldEditorReset = bool => ({
+    type: TOGGLE_SHOULD_EDITOR_RESET,
+    payload: bool
+})
+
+export const closeOpenFile = () => ({
+    type: CLOSE_OPEN_FILE
 })

@@ -9,7 +9,8 @@ import {
     doneSaveFileAction,
     startSaveFileAction,
     setFilePathAction,
-    setNewTitleBarText
+    setNewTitleBarText,
+    toggleShouldEditorReset
 } from '../actions'
 
 class EditorView extends View {
@@ -52,7 +53,10 @@ class EditorView extends View {
                 const editorState = this.editorStore.getState()
                 if (!editorState.isEditorDirty) return
 
-                if (!editorState.filePath) {
+                if (
+                    !editorState.filePath ||
+                    editorState.filePath === 'Untitled'
+                ) {
                     ipcRenderer.send('createFile')
                     return
                 }
@@ -120,6 +124,11 @@ class EditorView extends View {
                 : this.dispatcher.dispatch(
                       setNewTitleBarText(`${editroState.filePath}`)
                   )
+        } else this.dispatcher.dispatch(setNewTitleBarText(`Notepad Fluent`))
+
+        if (editroState.shouldResetEditor) {
+            this.codem.setValue('')
+            this.dispatcher.dispatch(toggleShouldEditorReset(false))
         }
     }
 }
