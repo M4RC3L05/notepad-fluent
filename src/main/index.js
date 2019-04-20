@@ -1,55 +1,14 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain, dialog, remote } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import * as path from 'path'
 import fs from 'fs'
 import { format as formatUrl } from 'url'
 import Throttle from 'throttle'
-
-const isDevelopment = process.env.NODE_ENV !== 'production'
+import MainWindow from './windows/MainWindow'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
-
-function createMainWindow() {
-    const window = new BrowserWindow({
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true
-        }
-    })
-
-    if (isDevelopment) {
-        window.webContents.openDevTools()
-    }
-
-    if (isDevelopment) {
-        window.loadURL(
-            `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
-        )
-    } else {
-        window.loadURL(
-            formatUrl({
-                pathname: path.join(__dirname, 'index.html'),
-                protocol: 'file',
-                slashes: true
-            })
-        )
-    }
-
-    window.on('closed', () => {
-        mainWindow = null
-    })
-
-    window.webContents.on('devtools-opened', () => {
-        window.focus()
-        setImmediate(() => {
-            window.focus()
-        })
-    })
-
-    return window
-}
 
 // quit application when all windows are closed
 app.on('window-all-closed', () => {
@@ -62,13 +21,29 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     // on macOS it is common to re-create a window even after all windows have been closed
     if (mainWindow === null) {
-        mainWindow = createMainWindow()
+        mainWindow = MainWindow.create({
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true
+            }
+        })
+
+        mainWindow.start()
     }
 })
 
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
-    mainWindow = createMainWindow()
+    if (mainWindow) return
+
+    mainWindow = MainWindow.create({
+        frame: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    })
+
+    mainWindow.start()
 })
 
 let currReadStream = null
@@ -118,7 +93,7 @@ ipcMain.on('createFile', e => {
     })
 })
 
-ipcMain.on('minimise-app', () => mainWindow.minimize())
-ipcMain.on('maximise-app', () => mainWindow.maximize())
-ipcMain.on('decrease-app', () => mainWindow.restore())
+ipcMain.on('minimise-app', () => mainWindow.getWindow().minimize())
+ipcMain.on('maximise-app', () => mainWindow.getWindow().maximize())
+ipcMain.on('decrease-app', () => mainWindow.getWindow().restore())
 ipcMain.on('close-app', () => app.quit())
