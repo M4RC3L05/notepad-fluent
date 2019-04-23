@@ -20,7 +20,9 @@ class Store {
     }
 
     reduce(state, action) {
-        return state
+        throw Error(
+            `The method reduce must be implemented on ${this.constructor.name}`
+        )
     }
 
     _notify() {

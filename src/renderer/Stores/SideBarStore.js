@@ -30,4 +30,4 @@ class SideBarStore extends Store {
     }
 }
 
-export default SideBarStore
+export default SideBarStore.create()

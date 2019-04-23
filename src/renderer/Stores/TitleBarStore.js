@@ -26,4 +26,4 @@ class TitleBarStore extends Store {
     }
 }
 
-export default TitleBarStore
+export default TitleBarStore.create()

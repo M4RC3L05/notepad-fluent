@@ -18,10 +18,11 @@ class Dispatcher {
     }
 
     dispatch(action) {
+        console.log('new action', action)
         if (typeof action === 'function') return action(this.dispatch)
 
         this.stores.forEach(s => s._onDispatch(action))
     }
 }
 
-export default Dispatcher
+export default new Dispatcher()

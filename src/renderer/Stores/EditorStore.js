@@ -119,4 +119,4 @@ class EditorStore extends Store {
     }
 }
 
-export default EditorStore
+export default EditorStore.create()

@@ -12,32 +12,27 @@ import {
     setNewTitleBarText,
     toggleShouldEditorReset
 } from '../actions'
+import EditorStore from '../Stores/EditorStore'
 
 class EditorView extends View {
-    constructor(props) {
-        super(props)
+    constructor(dispatcher) {
+        super(dispatcher)
 
-        this.dispatcher = props.dispatcher
-        this.editorStore = props.editorStore
-
-        this.setUpDependencies = this.setUpDependencies.bind(this)
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
 
-        this.setUpDependencies()
         this.setUpUI()
         this.setUpListeners()
 
         this.render()
     }
 
-    static create(props) {
-        return new EditorView(props)
+    static create(...props) {
+        return new EditorView(...props)
     }
 
-    setUpDependencies() {
-        this.editorStore.subscribe(this)
-        this.dispatcher.subscribe(this.editorStore)
+    getStores() {
+        return [EditorStore]
     }
 
     setUpUI() {
@@ -50,38 +45,39 @@ class EditorView extends View {
     setUpListeners() {
         this.codem.on('keydown', (cm, e) => {
             if (e.keyCode === 83 && e.ctrlKey) {
-                const editorState = this.editorStore.getState()
-                if (!editorState.isEditorDirty) return
+                const { EditorStore } = this.getState()
+                if (!EditorStore.isEditorDirty) return
 
                 if (
-                    !editorState.filePath ||
-                    editorState.filePath === 'Untitled'
+                    !EditorStore.filePath ||
+                    EditorStore.filePath === 'Untitled'
                 ) {
                     ipcRenderer.send('createFile')
                     return
                 }
 
-                this.dispatcher.dispatch(startSaveFileAction())
+                this.dispatch(startSaveFileAction())
                 ipcRenderer.send('saveFile', {
-                    path: editorState.filePath,
+                    path: EditorStore.filePath,
                     content: cm.getValue()
                 })
             }
         })
 
         ipcRenderer.on('saveFileDone', () => {
-            this.dispatcher.dispatch(doneSaveFileAction())
+            this.dispatch(doneSaveFileAction())
         })
 
         this.codem.on('change', (cm, e) => {
-            const editoState = this.editorStore.getState()
-            if (editoState.isLoadingFile) return
-            this.dispatcher.dispatch(fileContentChangeAction())
+            const { EditorStore } = this.getState()
+            if (EditorStore.isLoadingFile || EditorStore.shouldResetEditor)
+                return
+            this.dispatch(fileContentChangeAction())
         })
 
         ipcRenderer.on('fileLoadChunk', (e, d) => {
-            const editoState = this.editorStore.getState()
-            if (editoState.isLoadingFile)
+            const { EditorStore } = this.getState()
+            if (EditorStore.isLoadingFile)
                 this.codem.replaceRange(
                     d.data,
                     Codemirror.Pos(this.codem.lastLine())
@@ -89,46 +85,49 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('fileLoadDone', (e, d) => {
-            this.dispatcher.dispatch(doneLoadFileAction())
+            this.dispatch(doneLoadFileAction())
         })
 
         ipcRenderer.on('newFileOpen', (e, d) => {
-            this.codem.setValue('')
-            this.dispatcher.dispatch(setFilePathAction(d.path))
-            this.dispatcher.dispatch(startLoadFileAction())
+            this.dispatch(toggleShouldEditorReset(true))
+            this.dispatch(setFilePathAction(d.path))
+            this.dispatch(startLoadFileAction())
+            const { EditorStore } = this.getState()
             ipcRenderer.send('loadFile', {
-                path: this.editorStore.getState().filePath
+                path: EditorStore.filePath
             })
         })
 
         ipcRenderer.on('newFileCreated', (e, d) => {
-            const textToStart = !this.editorStore.getState().filePath
+            const { EditorStore } = this.getState()
+            const textToStart = !EditorStore.filePath
                 ? this.codem.getValue()
                 : ''
-            this.editorStore.getState().filePath && this.codem.setValue('')
-            this.dispatcher.dispatch(setFilePathAction(d.path))
+            EditorStore.filePath && this.codem.setValue('')
+            this.dispatch(setFilePathAction(d.path))
             ipcRenderer.send('saveFile', {
-                path: this.editorStore.getState().filePath,
+                path: EditorStore.filePath,
                 content: textToStart
             })
         })
     }
 
     render() {
-        const editroState = this.editorStore.getState()
-        if (editroState.filePath) {
-            editroState.isEditorDirty
-                ? this.dispatcher.dispatch(
-                      setNewTitleBarText(`* ${editroState.filePath}`)
-                  )
-                : this.dispatcher.dispatch(
-                      setNewTitleBarText(`${editroState.filePath}`)
-                  )
-        } else this.dispatcher.dispatch(setNewTitleBarText(`Notepad Fluent`))
+        const { EditorStore } = this.getState()
 
-        if (editroState.shouldResetEditor) {
+        if (EditorStore.filePath) {
+            EditorStore.isEditorDirty
+                ? this.dispatch(setNewTitleBarText(`* ${EditorStore.filePath}`))
+                : this.dispatch(setNewTitleBarText(`${EditorStore.filePath}`))
+        } else {
+            EditorStore.isEditorDirty
+                ? this.dispatch(setNewTitleBarText(`Untitled`))
+                : this.dispatch(setNewTitleBarText(`Notepad Fluent`))
+        }
+
+        if (EditorStore.shouldResetEditor) {
             this.codem.setValue('')
-            this.dispatcher.dispatch(toggleShouldEditorReset(false))
+            this.dispatch(toggleShouldEditorReset(false))
         }
     }
 }

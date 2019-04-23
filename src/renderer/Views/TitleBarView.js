@@ -1,34 +1,27 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
+import TitleBarStore from '../Stores/TitleBarStore'
+import SideBarStore from '../Stores/SideBarStore'
 
 class TitleBarView extends View {
-    constructor(props) {
-        super(props)
+    constructor(dispatcher) {
+        super(dispatcher)
 
-        this.dispatcher = props.dispatcher
-        this.titleBarStore = props.titleBarStore
-        this.sideBarStore = props.sideBarStore
-
-        this.setUpDependencies = this.setUpDependencies.bind(this)
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
 
-        this.setUpDependencies()
         this.setUpUI()
         this.setUpListeners()
 
         this.render()
     }
 
-    static create(props) {
-        return new TitleBarView(props)
+    getStores() {
+        return [TitleBarStore, SideBarStore]
     }
 
-    setUpDependencies() {
-        this.titleBarStore.subscribe(this)
-        this.sideBarStore.subscribe(this)
-        this.dispatcher.subscribe(this.titleBarStore)
-        this.dispatcher.subscribe(this.sideBarStore)
+    static create(...props) {
+        return new TitleBarView(...props)
     }
 
     setUpUI() {
@@ -69,10 +62,9 @@ class TitleBarView extends View {
     }
 
     render() {
-        const sideBarState = this.sideBarStore.getState()
-        const titleBarState = this.titleBarStore.getState()
+        const { SideBarStore, TitleBarStore } = this.getState()
 
-        if (sideBarState.isOpen) {
+        if (SideBarStore.isOpen) {
             this.titlebarTitle.style.paddingLeft = '15px'
             this.titlebarTitle.style.width = '255px'
         } else {
@@ -80,7 +72,7 @@ class TitleBarView extends View {
             this.titlebarTitle.style.width = '100%'
         }
 
-        this.titlebarTitle.textContent = titleBarState.titleBarText
+        this.titlebarTitle.textContent = TitleBarStore.titleBarText
     }
 }
 
