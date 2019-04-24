@@ -65,8 +65,8 @@ class TitleBarView extends View {
         const { SideBarStore, TitleBarStore } = this.getState()
 
         if (SideBarStore.isOpen) {
-            this.titlebarTitle.style.paddingLeft = '15px'
-            this.titlebarTitle.style.width = '255px'
+            this.titlebarTitle.style.paddingLeft = '270px'
+            this.titlebarTitle.style.width = '100%'
         } else {
             this.titlebarTitle.style.paddingLeft = '60px'
             this.titlebarTitle.style.width = '100%'

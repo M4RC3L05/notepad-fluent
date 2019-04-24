@@ -15,7 +15,7 @@ class View {
 
     getStores() {
         throw Error(
-            `static method getStores must be implemented in class ${
+            `method getStores must be implemented in class ${
                 this.constructor.name
             }.`
         )

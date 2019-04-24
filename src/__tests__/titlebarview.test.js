@@ -34,8 +34,8 @@ describe('TitleBar tests', () => {
         SideBarView.create(Dispatcher)
         document.querySelector('#menu').click()
 
-        expect(topBarTitle.style.paddingLeft).toBe('15px')
-        expect(topBarTitle.style.width).toBe('255px')
+        expect(topBarTitle.style.paddingLeft).toBe('270px')
+        expect(topBarTitle.style.width).toBe('100%')
     })
 
     it('Should send minimise event', () => {

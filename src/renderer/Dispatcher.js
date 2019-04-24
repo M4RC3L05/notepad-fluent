@@ -1,6 +1,6 @@
 class Dispatcher {
     constructor() {
-        this.stores = []
+        this._stores = []
         this.subscribe = this.subscribe.bind(this)
         this.dispatch = this.dispatch.bind(this)
     }
@@ -10,17 +10,17 @@ class Dispatcher {
     }
 
     subscribe(store) {
-        if (this.stores.find(s => s === store)) return
+        if (this._stores.find(s => s === store)) return
 
-        this.stores.push(store)
+        this._stores.push(store)
 
-        return () => (this.stores = this.stores.filter(s => s !== store))
+        return () => (this._stores = this._stores.filter(s => s !== store))
     }
 
     dispatch(action) {
         if (typeof action === 'function') return action(this.dispatch)
 
-        this.stores.forEach(s => s._onDispatch(action))
+        this._stores.forEach(s => s._onDispatch(action))
     }
 }
 
