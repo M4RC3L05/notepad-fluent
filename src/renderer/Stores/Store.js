@@ -1,7 +1,10 @@
+import Dispatcher from '../Dispatcher'
+
 class Store {
     constructor() {
         this.views = []
         this._state = this.getInitialState()
+        Dispatcher.subscribe(this)
     }
 
     getInitialState() {

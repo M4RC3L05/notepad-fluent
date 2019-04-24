@@ -10,7 +10,6 @@ class View {
         this._stores = this.getStores()
         this._stores.forEach(s => {
             s.subscribe(this)
-            this._dispatcher.subscribe(s)
         })
     }
 

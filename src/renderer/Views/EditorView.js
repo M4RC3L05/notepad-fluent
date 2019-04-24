@@ -120,7 +120,7 @@ class EditorView extends View {
                 ? this.dispatch(setNewTitleBarText(`* ${EditorStore.filePath}`))
                 : this.dispatch(setNewTitleBarText(`${EditorStore.filePath}`))
         } else {
-            EditorStore.isEditorDirty
+            EditorStore.isEditorDirty && !EditorStore.isLoadingFile
                 ? this.dispatch(setNewTitleBarText(`Untitled`))
                 : this.dispatch(setNewTitleBarText(`Notepad Fluent`))
         }
