@@ -5,6 +5,8 @@ import electron from 'electron'
 import getMarkup from './utils/getMarkup'
 import TitleBarView from '../renderer/Views/TitleBarView'
 import TitleBarStore from '../renderer/Stores/TitleBarStore'
+import SideBarView from '../renderer/Views/SideBarView'
+import Dispatcher from '../renderer/Dispatcher'
 
 jest.mock('electron', () => ({
     ipcRenderer: {
@@ -24,40 +26,20 @@ describe('TitleBar tests', () => {
     it('Should move title on open/close of the side bar', () => {
         const topBarTitle = document.querySelector('.top-bar__title')
 
-        TitleBarView.create({
-            dispatcher: { dispatch: () => {}, subscribe: () => {} },
-            sideBarStore: {
-                subscribe: () => {},
-                getState: () => ({ isOpen: false })
-            },
-            titleBarStore: TitleBarStore.create()
-        })
+        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
 
         expect(topBarTitle.style.paddingLeft).toBe('60px')
         expect(topBarTitle.style.width).toBe('100%')
 
-        TitleBarView.create({
-            dispatcher: { dispatch: () => {}, subscribe: () => {} },
-            sideBarStore: {
-                subscribe: () => {},
-                getState: () => ({ isOpen: true })
-            },
-            titleBarStore: TitleBarStore.create()
-        })
+        SideBarView.create(Dispatcher)
+        document.querySelector('#menu').click()
 
         expect(topBarTitle.style.paddingLeft).toBe('15px')
         expect(topBarTitle.style.width).toBe('255px')
     })
 
     it('Should send minimise event', () => {
-        TitleBarView.create({
-            dispatcher: { dispatch: () => {}, subscribe: () => {} },
-            sideBarStore: {
-                subscribe: () => {},
-                getState: () => ({ isOpen: false })
-            },
-            titleBarStore: TitleBarStore.create()
-        })
+        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
 
         const minimiseBtn = document.querySelector('#minimise')
 
@@ -70,14 +52,7 @@ describe('TitleBar tests', () => {
     })
 
     it('Should send close event', () => {
-        TitleBarView.create({
-            dispatcher: { dispatch: () => {}, subscribe: () => {} },
-            sideBarStore: {
-                subscribe: () => {},
-                getState: () => ({ isOpen: false })
-            },
-            titleBarStore: TitleBarStore.create()
-        })
+        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
 
         const closeBtn = document.querySelector('#close')
 
@@ -90,14 +65,7 @@ describe('TitleBar tests', () => {
     })
 
     it('Should send maximise / decrease event', () => {
-        TitleBarView.create({
-            dispatcher: { dispatch: () => {}, subscribe: () => {} },
-            sideBarStore: {
-                subscribe: () => {},
-                getState: () => ({ isOpen: false })
-            },
-            titleBarStore: TitleBarStore.create()
-        })
+        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
 
         const maximiseBtn = document.querySelector('#maximise')
         expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(0)

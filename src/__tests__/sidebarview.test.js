@@ -16,11 +16,7 @@ jest.mock('electron', () => ({
 describe('SideBar tests', () => {
     beforeEach(() => {
         document.documentElement.innerHTML = getMarkup()
-        SideBarView.create({
-            dispatcher: Dispatcher.create(),
-            sideBarStore: SideBarStore.create(),
-            editorStore: EditorStore.create()
-        })
+        SideBarView.create(Dispatcher)
     })
 
     afterEach(() => {
@@ -43,8 +39,9 @@ describe('SideBar tests', () => {
 
         expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(0)
         newFileBtn.click()
-        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(1)
+        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(2)
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('cancelLoad')
+        expect(electron.ipcRenderer.send).toHaveBeenCalledWith('createFile')
     })
 
     it('Should add new untitled file', () => {
@@ -59,18 +56,13 @@ describe('SideBar tests', () => {
     })
 
     it('Should trigger close open file', () => {
-        const d = Dispatcher.create()
-        SideBarView.create({
-            dispatcher: d,
-            sideBarStore: SideBarStore.create(),
-            editorStore: EditorStore.create()
-        })
+        SideBarView.create(Dispatcher)
 
         const sideBar = document.querySelector('.side-bar')
         const closeFileBtn = sideBar.querySelector('.side-bar__item#close_file')
 
         expect(closeFileBtn.style.display).toBe('none')
-        d.dispatch(doneLoadFileAction())
+        Dispatcher.dispatch(doneLoadFileAction())
         expect(closeFileBtn.style.display).toBe('block')
         closeFileBtn.click()
         expect(closeFileBtn.style.display).toBe('none')
