@@ -3,10 +3,9 @@ import 'jest-dom/extend-expect'
 import getMarkup from './utils/getMarkup'
 import SideBarView from '../renderer/Views/SideBarView'
 import Dispatcher from '../renderer/Dispatcher'
-import SideBarStore from '../renderer/Stores/SideBarStore'
-import EditorStore from '../renderer/Stores/EditorStore'
 import electron from 'electron'
 import { doneLoadFileAction } from '../renderer/actions'
+
 jest.mock('electron', () => ({
     ipcRenderer: {
         send: jest.fn()

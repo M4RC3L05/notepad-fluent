@@ -4,9 +4,9 @@ import electron from 'electron'
 
 import getMarkup from './utils/getMarkup'
 import TitleBarView from '../renderer/Views/TitleBarView'
-import TitleBarStore from '../renderer/Stores/TitleBarStore'
 import SideBarView from '../renderer/Views/SideBarView'
 import Dispatcher from '../renderer/Dispatcher'
+import { setNewTitleBarText } from '../renderer/actions'
 
 jest.mock('electron', () => ({
     ipcRenderer: {
@@ -23,10 +23,20 @@ describe('TitleBar tests', () => {
         electron.ipcRenderer.send.mockReset()
     })
 
+    it('Should show current title', () => {
+        const topBarTitle = document.querySelector('.top-bar__title')
+
+        TitleBarView.create(Dispatcher)
+        expect(topBarTitle.textContent).toBe('Notepad Fluent')
+
+        Dispatcher.dispatch(setNewTitleBarText('abc'))
+        expect(topBarTitle.textContent).toBe('abc')
+    })
+
     it('Should move title on open/close of the side bar', () => {
         const topBarTitle = document.querySelector('.top-bar__title')
 
-        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
+        TitleBarView.create(Dispatcher)
 
         expect(topBarTitle.style.paddingLeft).toBe('60px')
         expect(topBarTitle.style.width).toBe('100%')
@@ -39,7 +49,7 @@ describe('TitleBar tests', () => {
     })
 
     it('Should send minimise event', () => {
-        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
+        TitleBarView.create(Dispatcher)
 
         const minimiseBtn = document.querySelector('#minimise')
 
@@ -52,7 +62,7 @@ describe('TitleBar tests', () => {
     })
 
     it('Should send close event', () => {
-        TitleBarView.create({ dispatch: () => {}, subscribe: () => {} })
+        TitleBarView.create(Dispatcher)
 
         const closeBtn = document.querySelector('#close')
 
