@@ -1,9 +1,7 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
-import * as path from 'path'
+import { app, ipcMain, dialog } from 'electron'
 import fs from 'fs'
-import { format as formatUrl } from 'url'
 import Throttle from 'throttle'
 import MainWindow from './windows/MainWindow'
 
@@ -57,7 +55,7 @@ ipcMain.on('loadFile', (e, d) => {
         .createReadStream(d.path, {
             encoding: 'utf8'
         })
-        .pipe(new Throttle(1024 * 1024 * 2))
+        .pipe(new Throttle(1024 * 1024 * 1))
 
     currReadStream
         .on('data', data => {

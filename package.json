@@ -12,26 +12,26 @@
     "author": "M4RC3L05",
     "license": "MIT",
     "devDependencies": {
-        "@babel/core": "^7.3.4",
-        "@babel/plugin-proposal-class-properties": "^7.3.4",
-        "@babel/preset-env": "^7.3.4",
+        "@babel/core": "^7.5.4",
+        "@babel/plugin-proposal-class-properties": "^7.5.0",
+        "@babel/preset-env": "^7.5.4",
         "cross-env": "^5.2.0",
-        "css-loader": "^2.1.1",
-        "electron": "^4.0.8",
-        "electron-builder": "^20.39.0",
-        "electron-webpack": "^2.6.2",
+        "css-loader": "^3.0.0",
+        "electron": "^5.0.6",
+        "electron-builder": "^21.0.15",
+        "electron-webpack": "^2.7.4",
         "extract-text-webpack-plugin": "^3.0.2",
         "html-webpack-plugin": "^3.2.0",
-        "jest": "^24.5.0",
-        "jest-css-modules": "^1.1.0",
-        "jest-dom": "^3.1.3",
-        "optimize-css-assets-webpack-plugin": "^5.0.1",
+        "jest": "^24.8.0",
+        "jest-css-modules": "^2.1.0",
+        "optimize-css-assets-webpack-plugin": "^5.0.3",
         "style-loader": "^0.23.1",
-        "webpack": "^4.29.6"
+        "webpack": "^4.35.3",
+        "@testing-library/jest-dom": "^4.0.0"
     },
     "dependencies": {
-        "codemirror": "^5.44.0",
-        "source-map-support": "^0.5.11",
+        "codemirror": "^5.48.0",
+        "source-map-support": "^0.5.12",
         "throttle": "^1.0.3"
     }
 }
