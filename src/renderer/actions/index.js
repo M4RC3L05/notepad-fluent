@@ -11,7 +11,9 @@ import {
     CANCEL_FILE_LOAD,
     NEW_FILE,
     TOGGLE_SHOULD_EDITOR_RESET,
-    CLOSE_OPEN_FILE
+    CLOSE_OPEN_FILE,
+    SET_FILE_ENCODING_TYPE,
+    SET_FILE_EOL_TYPE
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -70,4 +72,14 @@ export const toggleShouldEditorReset = bool => ({
 
 export const closeOpenFile = () => ({
     type: CLOSE_OPEN_FILE
+})
+
+export const setFileEncodingType = encType => ({
+    type: SET_FILE_ENCODING_TYPE,
+    payload: encType
+})
+
+export const setFileEOLType = eolType => ({
+    type: SET_FILE_EOL_TYPE,
+    payload: eolType
 })

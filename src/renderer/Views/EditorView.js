@@ -59,7 +59,8 @@ class EditorView extends View {
                 this.dispatch(startSaveFileAction())
                 ipcRenderer.send('saveFile', {
                     path: EditorStore.filePath,
-                    content: cm.getValue()
+                    content: cm.getValue(),
+                    encoding: EditorStore.fileEncoding
                 })
             }
         })

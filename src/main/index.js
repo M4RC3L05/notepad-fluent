@@ -4,6 +4,7 @@ import { app, ipcMain, dialog } from 'electron'
 import fs from 'fs'
 import Throttle from 'throttle'
 import MainWindow from './windows/MainWindow'
+import chardet from 'chardet'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
@@ -51,9 +52,10 @@ ipcMain.on('loadFile', (e, d) => {
         currReadStream.destroy()
         currReadStream = null
     }
+
     currReadStream = fs
         .createReadStream(d.path, {
-            encoding: 'utf8'
+            encoding: 'UTF-8'
         })
         .pipe(new Throttle(1024 * 1024 * 1))
 
@@ -71,7 +73,7 @@ ipcMain.on('cancelLoad', () => {
 })
 
 ipcMain.on('saveFile', (e, d) => {
-    fs.writeFile(d.path, d.content, (err, d) => {
+    fs.writeFile(d.path, d.content, { encoding: d.encoding }, (err, d) => {
         e.sender.send('saveFileDone')
     })
 })

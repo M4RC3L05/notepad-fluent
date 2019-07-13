@@ -12,7 +12,7 @@
                 padding-right: 5px;
                 flex: 1;
                 margin-top: 32px;
-                height: calc(100% - 32px);
+                height: 100%;
             }
 
             .CodeMirror pre {
@@ -68,6 +68,14 @@
                 </div>
             </div>
         </div>
-        <textarea id="editor"></textarea>
+        <div
+            style="flex: 1; display:flex; flex-direction: column; overflow: hidden;"
+        >
+            <textarea id="editor"></textarea>
+            <!-- <div class="bottom-status-bar">
+                <div class="bottom-status-bar__encodingType"></div>
+                <div class="bottom-status-bar__eolType"></div>
+            </div> -->
+        </div>
     </body>
 </html>

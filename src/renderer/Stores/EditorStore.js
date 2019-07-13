@@ -30,7 +30,9 @@ class EditorStore extends Store {
             isEditorDirty: false,
             isSavingFile: false,
             shouldResetEditor: false,
-            hasFile: false
+            hasFile: false,
+            fileEncoding: 'UTF-8',
+            fileEndOfLineType: 'CRLF'
         }
     }
 
