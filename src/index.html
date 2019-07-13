@@ -4,11 +4,13 @@
         <meta charset="UTF-8" />
         <title>Notepad</title>
         <style>
+            .CodeMirror {
+                line-height: 18px !important;
+            }
             .CodeMirror.cm-s-default {
                 background: transparent;
                 color: white;
                 width: 100%;
-                padding-left: 5px;
                 padding-right: 5px;
                 flex: 1;
                 margin-top: 32px;
@@ -16,11 +18,21 @@
             }
 
             .CodeMirror pre {
-                font-size: 1.2em !important;
+                font-size: 18px !important;
             }
 
             .CodeMirror-cursor {
                 border-left: 1px solid white !important;
+            }
+
+            .CodeMirror-gutters {
+                border: 0 !important;
+                background: #000 !important;
+            }
+
+            .CodeMirror-linenumber.CodeMirror-gutter-elt {
+                font-size: 18px !important;
+                color: white !important;
             }
         </style>
     </head>
@@ -68,9 +80,7 @@
                 </div>
             </div>
         </div>
-        <div
-            style="flex: 1; display:flex; flex-direction: column; overflow: hidden;"
-        >
+        <div id="editor-wrapper">
             <textarea id="editor"></textarea>
             <!-- <div class="bottom-status-bar">
                 <div class="bottom-status-bar__encodingType"></div>

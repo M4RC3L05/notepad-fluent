@@ -37,12 +37,34 @@ class EditorView extends View {
 
     setUpUI() {
         this.editor = document.querySelector('#editor')
+        this.editorWrapper = document.querySelector('#editor-wrapper')
         this.codem = Codemirror.fromTextArea(this.editor, {
-            mode: ''
+            mode: '',
+            dragDrop: false,
+            lineNumbers: false
         })
     }
 
     setUpListeners() {
+        this.editorWrapper.addEventListener('dragover', e => {
+            e.preventDefault()
+            this.editorWrapper.classList.add('file-hover')
+        })
+        this.editorWrapper.addEventListener('dragleave', e => {
+            e.preventDefault()
+            this.editorWrapper.classList.remove('file-hover')
+            // this.editorWrapper.style.filter = 'blur(0px)'
+        })
+        this.editorWrapper.addEventListener('drop', e => {
+            if (e.dataTransfer.items) {
+                ipcRenderer.emit('newFileOpen', {
+                    path: e.dataTransfer.items[0].getAsFile().path
+                })
+            }
+
+            this.editorWrapper.classList.remove('file-hover')
+        })
+
         this.codem.on('keydown', (cm, e) => {
             if (e.keyCode === 83 && e.ctrlKey) {
                 const { EditorStore } = this.getState()
@@ -90,8 +112,12 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('newFileOpen', (e, d) => {
+            const path = d && d.path ? d.path : e && e.path ? e.path : null
+
+            if (!path) return
+
             this.dispatch(toggleShouldEditorReset(true))
-            this.dispatch(setFilePathAction(d.path))
+            this.dispatch(setFilePathAction(path))
             this.dispatch(startLoadFileAction())
             const { EditorStore } = this.getState()
             ipcRenderer.send('loadFile', {
