@@ -4,7 +4,6 @@ import { app, ipcMain, dialog } from 'electron'
 import fs from 'fs'
 import Throttle from 'throttle'
 import MainWindow from './windows/MainWindow'
-import chardet from 'chardet'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow

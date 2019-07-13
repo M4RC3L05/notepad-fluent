@@ -6,6 +6,10 @@ class TitleBarStore extends Store {
         super()
     }
 
+    static getClassName() {
+        return 'TitleBarStore'
+    }
+
     static create() {
         return new TitleBarStore()
     }

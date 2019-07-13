@@ -7,6 +7,10 @@ class Store {
         Dispatcher.subscribe(this)
     }
 
+    static getClassName() {
+        throw Error('getClassName must be implemented in child,')
+    }
+
     getInitialState() {
         return {}
     }
@@ -23,9 +27,7 @@ class Store {
     }
 
     reduce(state, action) {
-        throw Error(
-            `The method reduce must be implemented on ${this.constructor.name}`
-        )
+        throw Error(`The method reduce must be implemented`)
     }
 
     _notify() {

@@ -6,6 +6,10 @@ class SideBarStore extends Store {
         super()
     }
 
+    static getClassName() {
+        return 'SideBarStore'
+    }
+
     static create() {
         return new SideBarStore()
     }

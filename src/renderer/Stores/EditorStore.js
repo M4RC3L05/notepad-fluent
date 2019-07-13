@@ -18,6 +18,10 @@ class EditorStore extends Store {
         super()
     }
 
+    static getClassName() {
+        return 'EditorStore'
+    }
+
     static create() {
         return new EditorStore()
     }

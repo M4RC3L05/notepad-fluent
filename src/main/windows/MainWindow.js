@@ -1,6 +1,7 @@
 import { BrowserWindow } from 'electron'
 import { isDevelopment } from '../../common/utils'
-
+import path from 'path'
+import { format } from 'url'
 class MainWindow {
     constructor(windowOptions) {
         this._windowOptions = windowOptions
@@ -31,7 +32,7 @@ class MainWindow {
             )
         } else {
             this._window.loadURL(
-                formatUrl({
+                format({
                     pathname: path.join(__dirname, 'index.html'),
                     protocol: 'file',
                     slashes: true

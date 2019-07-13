@@ -29,7 +29,7 @@ class View {
         return this._stores.reduce(
             (acc, curr) => ({
                 ...acc,
-                [curr.constructor.name]: curr.getState()
+                [curr.constructor.getClassName()]: curr.getState()
             }),
             {}
         )
