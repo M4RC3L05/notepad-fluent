@@ -40,7 +40,6 @@ class ConfirmDialogView extends View {
         this.confirmDialog = template.content.firstChild
         document.body.prepend(this.confirmDialog)
         setTimeout(() => this.confirmDialog.classList.add('animate'), 0)
-        console.log(this.confirmDialog)
         this.confirmBtn = document.getElementById('confirmDialog@@btn-confirm')
         this.cancelBtn = document.getElementById('confirmDialog@@btn-cancel')
     }
