@@ -13,6 +13,10 @@ class View {
         })
     }
 
+    static create(...props) {
+        throw Error('static method create must be implemented')
+    }
+
     getStores() {
         throw Error(
             `method getStores must be implemented in class ${
@@ -35,10 +39,12 @@ class View {
         )
     }
 
+    onDestroy() {
+        throw Error(`onDestroy method must be implemented.`)
+    }
+
     render() {
-        throw Error(
-            `static method getModels must be implemented in class ${this.name}.`
-        )
+        throw Error(`render method must be implemented.`)
     }
 }
 

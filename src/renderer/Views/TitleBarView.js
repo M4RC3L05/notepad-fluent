@@ -2,6 +2,8 @@ import View from './View'
 import { ipcRenderer } from 'electron'
 import TitleBarStore from '../Stores/TitleBarStore'
 import SideBarStore from '../Stores/SideBarStore'
+import ConfirmDialogView from './ConfirmDialogView'
+import Dispatcher from '../Dispatcher'
 
 class TitleBarView extends View {
     constructor(dispatcher) {
@@ -37,7 +39,14 @@ class TitleBarView extends View {
 
                 switch (btnType) {
                     case 'close':
-                        ipcRenderer.send('close-app')
+                        const confirmDialog = ConfirmDialogView.create(
+                            Dispatcher,
+                            'Tem a certesa que pretende sair?',
+                            e => {
+                                ipcRenderer.send('close-app')
+                            },
+                            e => confirmDialog.onDestroy()
+                        )
                         break
 
                     case 'minimise':

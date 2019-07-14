@@ -148,6 +148,23 @@ html {
     display: flex;
 }
 
+.btn {
+    border: 2px solid transparent;
+    padding: 0px 16px;
+    font-size: 14px;
+    height: 32px;
+    font-weight: bold;
+    min-width: 80px;
+    background: #333333;
+    color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.btn:hover {
+    border: 2px solid rgb(143, 143, 143);
+}
+
 .side-bar {
     padding-top: 30px;
     width: 50px;
@@ -376,4 +393,41 @@ html {
 
 #editor-wrapper.file-hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+.confirm-dialog {
+    position: fixed;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0);
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.confirm-dialog.animate {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.confirm-dialog__wrapper {
+    padding: 20px;
+    display: flex;
+    background: #000;
+    color: white;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #3c3c3c;
+}
+
+.confirm-dialog__message {
+    font-weight: 300;
+}
+
+.confirm-dialog__controls {
+    margin-top: 40px;
 }
