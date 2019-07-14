@@ -1,12 +1,22 @@
 'use strict'
 
-import { app, ipcMain, dialog } from 'electron'
+import { app, ipcMain, dialog, ipcRenderer } from 'electron'
 import fs from 'fs'
+import path from 'path'
 import Throttle from 'throttle'
 import MainWindow from './windows/MainWindow'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
+let initFile = null
+let currReadStream = null
+
+if (process.argv.length >= 2) {
+    if (fs.existsSync(path.resolve(process.argv[1])))
+        initFile = { path: path.resolve(process.argv[1]) }
+    else if (fs.existsSync(path.resolve(process.cwd(), process.argv[1])))
+        initFile = { path: path.resolve(process.cwd(), process.argv[1]) }
+}
 
 // quit application when all windows are closed
 app.on('window-all-closed', () => {
@@ -44,8 +54,6 @@ app.on('ready', () => {
     mainWindow.start()
 })
 
-let currReadStream = null
-
 ipcMain.on('loadFile', (e, d) => {
     if (currReadStream) {
         currReadStream.destroy()
@@ -53,7 +61,7 @@ ipcMain.on('loadFile', (e, d) => {
     }
 
     currReadStream = fs
-        .createReadStream(d.path, {
+        .createReadStream(e && e.path ? e.path : d.path, {
             encoding: 'UTF-8'
         })
         .pipe(new Throttle(1024 * 1024 * 1))
@@ -91,7 +99,12 @@ ipcMain.on('createFile', e => {
         e.sender.send('newFileCreated', { path: r })
     })
 })
-
+ipcMain.on('check-initfile', e => {
+    if (!initFile) return
+    const tmpInitFile = initFile
+    e.sender.send('check-initfile', tmpInitFile)
+    initFile = null
+})
 ipcMain.on('minimise-app', () => mainWindow.getWindow().minimize())
 ipcMain.on('maximise-app', () => mainWindow.getWindow().maximize())
 ipcMain.on('decrease-app', () => mainWindow.getWindow().restore())

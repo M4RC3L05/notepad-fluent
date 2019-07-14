@@ -137,6 +137,12 @@ class EditorView extends View {
                 content: textToStart
             })
         })
+
+        ipcRenderer.on('check-initfile', (e, d) => {
+            if (!d.path) return
+            ipcRenderer.emit('newFileOpen', d)
+        })
+        ipcRenderer.send('check-initfile', {})
     }
 
     render() {
