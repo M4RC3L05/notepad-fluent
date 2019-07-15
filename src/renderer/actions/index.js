@@ -14,7 +14,8 @@ import {
     CLOSE_OPEN_FILE,
     SET_FILE_ENCODING_TYPE,
     SET_FILE_EOL_TYPE,
-    RESET_BOTTOM_STATUS_BAR
+    RESET_BOTTOM_STATUS_BAR,
+    FILE_CONTENT_PRESTINE_ACTION
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -87,4 +88,8 @@ export const setFileEOLType = eolType => ({
 
 export const resetBottomStatusBar = () => ({
     type: RESET_BOTTOM_STATUS_BAR
+})
+
+export const fileContentPrestine = () => ({
+    type: FILE_CONTENT_PRESTINE_ACTION
 })

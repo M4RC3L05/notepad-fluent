@@ -1,7 +1,7 @@
 import View from './View'
 
 class ConfirmDialogView extends View {
-    constructor(dispatcher, confirmMessage, onConfirm, onCancel) {
+    constructor(dispatcher, {confirmMessage, onConfirm, onCancel}) {
         super(dispatcher)
 
         this.setUpUI = this.setUpUI.bind(this)

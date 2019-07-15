@@ -1,6 +1,7 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
 import TitleBarStore from '../Stores/TitleBarStore'
+import EditorStore from '../Stores/EditorStore'
 import SideBarStore from '../Stores/SideBarStore'
 import ConfirmDialogView from './ConfirmDialogView'
 import Dispatcher from '../Dispatcher'
@@ -19,7 +20,7 @@ class TitleBarView extends View {
     }
 
     getStores() {
-        return [TitleBarStore, SideBarStore]
+        return [TitleBarStore, SideBarStore, EditorStore]
     }
 
     static create(...props) {
@@ -39,14 +40,19 @@ class TitleBarView extends View {
 
                 switch (btnType) {
                     case 'close':
-                        const confirmDialog = ConfirmDialogView.create(
-                            Dispatcher,
-                            'Tem a certesa que pretende sair?',
-                            e => {
-                                ipcRenderer.send('close-app')
-                            },
-                            e => confirmDialog.onDestroy()
-                        )
+                        if (this.getState().EditorStore.isEditorDirty) {
+                            const confirmDialog = ConfirmDialogView.create(
+                                Dispatcher,
+                                {
+                                    confirmMessage:
+                                        'Tem a certeza que pretende sair, sem guardar?',
+                                    onConfirm: e => {
+                                        ipcRenderer.send('close-app')
+                                    },
+                                    onCancel: e => confirmDialog.onDestroy()
+                                }
+                            )
+                        } else ipcRenderer.send('close-app')
                         break
 
                     case 'minimise':

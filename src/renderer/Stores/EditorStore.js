@@ -11,7 +11,8 @@ import {
     NEW_FILE,
     TOGGLE_SHOULD_EDITOR_RESET,
     CLOSE_OPEN_FILE,
-    SET_FILE_EOL_TYPE
+    SET_FILE_EOL_TYPE,
+    FILE_CONTENT_PRESTINE_ACTION
 } from '../actions/types'
 
 class EditorStore extends Store {
@@ -35,7 +36,8 @@ class EditorStore extends Store {
             isEditorDirty: false,
             isSavingFile: false,
             shouldResetEditor: false,
-            hasFile: false
+            hasFile: false,
+            fileLength: 0
         }
     }
 
@@ -115,8 +117,12 @@ class EditorStore extends Store {
                     isEditorDirty: false,
                     isSavingFile: false,
                     shouldResetEditor: true,
-                    hasFile: false
+                    hasFile: false,
+                    fileLength: 0
                 }
+
+            case FILE_CONTENT_PRESTINE_ACTION:
+                return { ...state, isEditorDirty: false }
 
             default:
                 return state

@@ -10,7 +10,9 @@ import {
     startSaveFileAction,
     setFilePathAction,
     setNewTitleBarText,
-    toggleShouldEditorReset
+    toggleShouldEditorReset,
+    closeOpenFile,
+    fileContentPrestine
 } from '../actions'
 import EditorStore from '../Stores/EditorStore'
 
@@ -95,7 +97,10 @@ class EditorView extends View {
             const { EditorStore } = this.getState()
             if (EditorStore.isLoadingFile || EditorStore.shouldResetEditor)
                 return
-            this.dispatch(fileContentChangeAction())
+
+            if (cm.getDoc().historySize().undo > 0)
+                this.dispatch(fileContentChangeAction())
+            else this.dispatch(fileContentPrestine())
         })
 
         ipcRenderer.on('fileLoadChunk', (e, d) => {
@@ -108,6 +113,7 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('fileLoadDone', (e, d) => {
+            this.codem.getDoc().clearHistory()
             this.dispatch(doneLoadFileAction())
         })
 
@@ -148,18 +154,6 @@ class EditorView extends View {
     render() {
         const { EditorStore } = this.getState()
 
-        // if (EditorStore.fileEndOfLineType !== this.codem.lineSeparator()) {
-        //     const data = this.codem.getValue()
-        //     console.log(data)
-        //     this.codem = Codemirror.fromTextArea(this.editor, {
-        //         mode: '',
-        //         value: data,
-        //         dragDrop: false,
-        //         lineNumbers: false,
-        //         lineSeparator: EditorStore.fileEndOfLineType
-        //     })
-        // }
-
         if (EditorStore.filePath) {
             EditorStore.isEditorDirty
                 ? this.dispatch(setNewTitleBarText(`* ${EditorStore.filePath}`))
@@ -172,6 +166,7 @@ class EditorView extends View {
 
         if (EditorStore.shouldResetEditor) {
             this.codem.setValue('')
+            this.codem.getDoc().clearHistory()
             this.dispatch(toggleShouldEditorReset(false))
         }
     }
