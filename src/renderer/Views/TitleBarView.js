@@ -32,7 +32,7 @@ class TitleBarView extends View {
 
     setUpListeners() {
         Array.from(
-            document.querySelectorAll('.top-bar__buttons .icon-bg .icon')
+            document.querySelectorAll('.top-bar__buttons .icon')
         ).forEach(winbtn =>
             winbtn.addEventListener('click', e => {
                 const btnType = e.target.getAttribute('id')
