@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<svg version="1.1" id="Capa_1" width="11" height="11" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px">
-    <path d='M11 4.399V5.5H0V4.399h11z' fill='%23000'/>
+<svg id="Icon"
+    xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+    <rect shape-rendering="geometricPrecision" id="Footprint" width="12" height="12" fill="rgba(0,0,0,0)"/>
+    <text shape-rendering="geometricPrecision" style="fill: #ffffff" id="Icon-2" data-name="Icon" transform="translate(1 11)" font-size="10" font-family="SegoeMDL2Assets, Segoe MDL2 Assets">
+        <tspan x="0" y="0"></tspan>
+    </text>
 </svg>
