@@ -10,7 +10,8 @@ import {
     CANCEL_FILE_LOAD,
     NEW_FILE,
     TOGGLE_SHOULD_EDITOR_RESET,
-    CLOSE_OPEN_FILE
+    CLOSE_OPEN_FILE,
+    SET_FILE_EOL_TYPE
 } from '../actions/types'
 
 class EditorStore extends Store {
@@ -34,9 +35,7 @@ class EditorStore extends Store {
             isEditorDirty: false,
             isSavingFile: false,
             shouldResetEditor: false,
-            hasFile: false,
-            fileEncoding: 'UTF-8',
-            fileEndOfLineType: 'CRLF'
+            hasFile: false
         }
     }
 

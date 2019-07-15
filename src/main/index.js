@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import Throttle from 'throttle'
 import MainWindow from './windows/MainWindow'
+import { getLineEnding } from '../common/utils'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
@@ -60,15 +61,19 @@ ipcMain.on('loadFile', (e, d) => {
         currReadStream = null
     }
 
-    currReadStream = fs
-        .createReadStream(e && e.path ? e.path : d.path, {
-            encoding: 'UTF-8'
-        })
-        .pipe(new Throttle(1024 * 1024 * 1))
+    currReadStream = fs.createReadStream(e && e.path ? e.path : d.path, {
+        encoding: 'UTF-8'
+    })
 
     currReadStream
+        .pipe(new Throttle(1024 * 1024 * 1))
         .on('data', data => {
             e.sender.send('fileLoadChunk', { data: data.toString() })
+        })
+        .once('data', data => {
+            e.sender.send('setLineTerminator', {
+                eolType: getLineEnding(data.toString())
+            })
         })
         .on('error', () => e.sender.send('fileLoadDone', { success: false }))
         .on('end', () => e.sender.send('fileLoadDone', { success: true }))

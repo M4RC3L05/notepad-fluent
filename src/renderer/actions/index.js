@@ -13,7 +13,8 @@ import {
     TOGGLE_SHOULD_EDITOR_RESET,
     CLOSE_OPEN_FILE,
     SET_FILE_ENCODING_TYPE,
-    SET_FILE_EOL_TYPE
+    SET_FILE_EOL_TYPE,
+    RESET_BOTTOM_STATUS_BAR
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -82,4 +83,8 @@ export const setFileEncodingType = encType => ({
 export const setFileEOLType = eolType => ({
     type: SET_FILE_EOL_TYPE,
     payload: eolType
+})
+
+export const resetBottomStatusBar = () => ({
+    type: RESET_BOTTOM_STATUS_BAR
 })

@@ -5,7 +5,8 @@ import {
     setNewTitleBarText,
     toggleShouldEditorReset,
     newFile,
-    closeOpenFile
+    closeOpenFile,
+    resetBottomStatusBar
 } from '../actions'
 import { ipcRenderer } from 'electron'
 import SideBarStore from '../Stores/SideBarStore'
@@ -60,6 +61,7 @@ class SideBarView extends View {
         this.closeFileBtn.addEventListener('click', e => {
             const { EditorStore } = this.getState()
             if (EditorStore.hasFile) this.dispatch(closeOpenFile())
+            this.dispatch(resetBottomStatusBar())
         })
     }
 

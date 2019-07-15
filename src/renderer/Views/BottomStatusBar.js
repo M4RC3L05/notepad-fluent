@@ -1,7 +1,7 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
-import EditorStore from '../Stores/EditorStore'
-import { Dictionary } from 'terser'
+import { setFileEOLType } from '../actions'
+import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 
 class BottomStatusBar extends View {
     constructor(dispatcher) {
@@ -17,7 +17,7 @@ class BottomStatusBar extends View {
     }
 
     getStores() {
-        return [EditorStore]
+        return [BottomStatusBarStore]
     }
 
     static create(...props) {
@@ -33,13 +33,17 @@ class BottomStatusBar extends View {
         )
     }
 
-    setUpListeners() {}
+    setUpListeners() {
+        ipcRenderer.on('setLineTerminator', (e, d) => {
+            this.dispatch(setFileEOLType(d.eolType))
+        })
+    }
 
     render() {
-        const { EditorStore } = this.getState()
+        const { BottomStatusBarStore } = this.getState()
 
-        this.encodingTypeDisplay.textContent = EditorStore.fileEncoding
-        this.eolTypeDisplay.textContent = EditorStore.fileEndOfLineType
+        this.encodingTypeDisplay.textContent = BottomStatusBarStore.fileEncoding
+        this.eolTypeDisplay.textContent = BottomStatusBarStore.fileEndOfLineType
     }
 }
 

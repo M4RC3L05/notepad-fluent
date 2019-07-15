@@ -148,6 +148,18 @@ class EditorView extends View {
     render() {
         const { EditorStore } = this.getState()
 
+        // if (EditorStore.fileEndOfLineType !== this.codem.lineSeparator()) {
+        //     const data = this.codem.getValue()
+        //     console.log(data)
+        //     this.codem = Codemirror.fromTextArea(this.editor, {
+        //         mode: '',
+        //         value: data,
+        //         dragDrop: false,
+        //         lineNumbers: false,
+        //         lineSeparator: EditorStore.fileEndOfLineType
+        //     })
+        // }
+
         if (EditorStore.filePath) {
             EditorStore.isEditorDirty
                 ? this.dispatch(setNewTitleBarText(`* ${EditorStore.filePath}`))
