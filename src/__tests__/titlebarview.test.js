@@ -67,11 +67,6 @@ describe('TitleBar tests', () => {
         const closeBtn = document.querySelector('#close')
 
         closeBtn.click()
-        document.getElementById('confirmDialog@@btn-cancel').click()
-        expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(0)
-
-        closeBtn.click()
-        document.getElementById('confirmDialog@@btn-confirm').click()
         expect(electron.ipcRenderer.send).toHaveBeenCalledTimes(1)
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('close-app')
     })
