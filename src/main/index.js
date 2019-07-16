@@ -4,6 +4,7 @@ import { app, ipcMain, dialog, ipcRenderer } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import Throttle from 'throttle'
+import os from 'os'
 import MainWindow from './windows/MainWindow'
 import { getLineEnding } from '../common/utils'
 
@@ -11,6 +12,15 @@ import { getLineEnding } from '../common/utils'
 let mainWindow
 let initFile = null
 let currReadStream = null
+
+if (!fs.existsSync(path.resolve(os.homedir(), 'notepad-fluent-config.json'))) {
+    fs.writeFileSync(
+        path.resolve(os.homedir(), 'notepad-fluent-config.json'),
+        fs
+            .readFileSync(path.resolve(__static, 'config-template.json'))
+            .toString()
+    )
+}
 
 if (process.argv.length >= 2) {
     if (fs.existsSync(path.resolve(process.argv[1])))

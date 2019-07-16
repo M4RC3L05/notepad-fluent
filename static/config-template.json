@@ -1,0 +1,14 @@
+{
+    "colors": {
+        "topbar-bg-color": "#2d2d2d",
+        "topbar-text-color": " #fff",
+        "bottombar-bg-color": "#2d2d2d",
+        "bottombar-text-color": "#fff",
+        "sidebar-bg-color": "#313131",
+        "sidebar-text-color": "#fff",
+        "bg-color": "#222222",
+        "text-color": "#fff",
+        "dialog-bg-color": "#000",
+        "dialog-text-color": "#fff"
+    }
+}
