@@ -43,7 +43,8 @@ app.on('activate', () => {
         mainWindow = MainWindow.create({
             frame: false,
             webPreferences: {
-                nodeIntegration: true
+                nodeIntegration: true,
+                preload: path.resolve(__static, 'preload.js')
             }
         })
 
@@ -58,7 +59,8 @@ app.on('ready', () => {
     mainWindow = MainWindow.create({
         frame: false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            preload: path.resolve(__static, 'preload.js')
         }
     })
 

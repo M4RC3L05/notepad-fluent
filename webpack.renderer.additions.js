@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const path = require('path')
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -15,5 +16,11 @@ module.exports = {
         ? {
               minimizer: [new OptimizeCSSAssetsPlugin({})]
           }
-        : {}
+        : {},
+
+    resolve: {
+        alias: {
+            '@static': path.resolve(__dirname, 'static')
+        }
+    }
 }

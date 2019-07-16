@@ -5,6 +5,19 @@
         <title>Notepad</title>
     </head>
     <body>
+        <script>
+            let colors = localStorage.getItem('colors')
+            if (colors) {
+                colors = JSON.parse(colors)
+
+                for (const [key, style] of Object.entries(colors)) {
+                    document.documentElement.style.setProperty(
+                        '--' + key,
+                        style
+                    )
+                }
+            }
+        </script>
         <div class="top-bar">
             <div class="top-bar__title">Notepad Fluent</div>
             <div class="top-bar__buttons">
