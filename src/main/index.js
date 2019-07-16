@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, ipcMain, dialog, ipcRenderer } from 'electron'
+import { app, ipcMain, dialog, shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import Throttle from 'throttle'
@@ -121,6 +121,11 @@ ipcMain.on('check-initfile', e => {
     const tmpInitFile = initFile
     e.sender.send('check-initfile', tmpInitFile)
     initFile = null
+})
+ipcMain.on('openConfigFile', () => {
+    shell.openExternal(
+        `file:///${path.resolve(os.homedir(), 'notepad-fluent-config.json')}`
+    )
 })
 ipcMain.on('minimise-app', () => mainWindow.getWindow().minimize())
 ipcMain.on('maximise-app', () => mainWindow.getWindow().maximize())

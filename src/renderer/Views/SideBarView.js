@@ -38,6 +38,7 @@ class SideBarView extends View {
         this.openFileBtn = document.querySelector('.side-bar__item#file')
         this.addFileBtn = document.querySelector('.side-bar__item#add_file')
         this.closeFileBtn = document.querySelector('.side-bar__item#close_file')
+        this.configBtn = document.querySelector('.side-bar__item#settings')
         this.sidebar = document.querySelector('.side-bar')
     }
 
@@ -62,6 +63,10 @@ class SideBarView extends View {
             const { EditorStore } = this.getState()
             if (EditorStore.hasFile) this.dispatch(closeOpenFile())
             this.dispatch(resetBottomStatusBar())
+        })
+
+        this.configBtn.addEventListener('click', () => {
+            ipcRenderer.send('openConfigFile')
         })
     }
 
