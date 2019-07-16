@@ -1,0 +1,29 @@
+.CodeMirror {
+    line-height: 18px !important;
+}
+.CodeMirror.cm-s-default {
+    background: transparent;
+    color: var(--text-color);
+    width: 100%;
+    padding-right: 5px;
+    flex: 1;
+    margin-top: 32px;
+    height: 100%;
+}
+
+.CodeMirror pre {
+    font-size: 18px !important;
+}
+
+.CodeMirror-cursor {
+    border-left: 1px solid var(--text-color) !important;
+}
+
+.CodeMirror-gutters {
+    border: 0 !important;
+    background: #000 !important;
+}
+
+.CodeMirror-scrollbar-filler {
+    background: #1e1e1e !important;
+}
