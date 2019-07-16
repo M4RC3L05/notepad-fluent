@@ -1,3 +1,5 @@
+import os from 'os'
+
 export const isDevelopment = process.env.NODE_ENV !== 'production'
 
 export function getLineEnding(content) {
@@ -6,10 +8,10 @@ export function getLineEnding(content) {
         '\r': 'CR',
         '\n': 'LF',
         '\r\n': 'CRLF'
-    }[matched]
+    }
 
     if (matched) {
-        return returned
+        return returned[matched]
     }
-    return 'NA'
+    return returned[os.EOL.toString()]
 }

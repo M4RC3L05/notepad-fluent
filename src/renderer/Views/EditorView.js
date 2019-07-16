@@ -11,10 +11,10 @@ import {
     setFilePathAction,
     setNewTitleBarText,
     toggleShouldEditorReset,
-    closeOpenFile,
     fileContentPrestine
 } from '../actions'
 import EditorStore from '../Stores/EditorStore'
+import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 
 class EditorView extends View {
     constructor(dispatcher) {
@@ -22,6 +22,7 @@ class EditorView extends View {
 
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
+        this.saveContents = this.saveContents.bind(this)
 
         this.setUpUI()
         this.setUpListeners()
@@ -34,7 +35,7 @@ class EditorView extends View {
     }
 
     getStores() {
-        return [EditorStore]
+        return [EditorStore, BottomStatusBarStore]
     }
 
     setUpUI() {
@@ -55,7 +56,6 @@ class EditorView extends View {
         this.editorWrapper.addEventListener('dragleave', e => {
             e.preventDefault()
             this.editorWrapper.classList.remove('file-hover')
-            // this.editorWrapper.style.filter = 'blur(0px)'
         })
         this.editorWrapper.addEventListener('drop', e => {
             if (e.dataTransfer.items) {
@@ -70,34 +70,33 @@ class EditorView extends View {
         this.codem.on('keydown', (cm, e) => {
             if (e.keyCode === 83 && e.ctrlKey) {
                 const { EditorStore } = this.getState()
+                if (EditorStore.isSavingFile) return
                 if (!EditorStore.isEditorDirty) return
 
                 if (
                     !EditorStore.filePath ||
                     EditorStore.filePath === 'Untitled'
                 ) {
+                    this.dispatch(startSaveFileAction())
                     ipcRenderer.send('createFile')
                     return
                 }
 
                 this.dispatch(startSaveFileAction())
-                ipcRenderer.send('saveFile', {
-                    path: EditorStore.filePath,
-                    content: cm.getValue(),
-                    encoding: EditorStore.fileEncoding
-                })
+                this.saveContents()
             }
         })
 
         ipcRenderer.on('saveFileDone', () => {
+            this.codem.getDoc().clearHistory()
             this.dispatch(doneSaveFileAction())
+            this.dispatch(fileContentPrestine())
         })
 
         this.codem.on('change', (cm, e) => {
             const { EditorStore } = this.getState()
             if (EditorStore.isLoadingFile || EditorStore.shouldResetEditor)
                 return
-
             if (cm.getDoc().historySize().undo > 0)
                 this.dispatch(fileContentChangeAction())
             else this.dispatch(fileContentPrestine())
@@ -133,15 +132,9 @@ class EditorView extends View {
 
         ipcRenderer.on('newFileCreated', (e, d) => {
             const { EditorStore } = this.getState()
-            const textToStart = !EditorStore.filePath
-                ? this.codem.getValue()
-                : ''
             EditorStore.filePath && this.codem.setValue('')
             this.dispatch(setFilePathAction(d.path))
-            ipcRenderer.send('saveFile', {
-                path: EditorStore.filePath,
-                content: textToStart
-            })
+            this.saveContents()
         })
 
         ipcRenderer.on('check-initfile', (e, d) => {
@@ -151,9 +144,29 @@ class EditorView extends View {
         ipcRenderer.send('check-initfile', {})
     }
 
-    render() {
-        const { EditorStore } = this.getState()
+    saveContents() {
+        const { BottomStatusBarStore, EditorStore } = this.getState()
 
+        const readable = new (require('stream')).Readable()
+        readable.push(this.codem.getValue())
+        readable.push(null)
+        readable
+            .on('data', data => {
+                ipcRenderer.send('saveFileChunk', {
+                    data: data,
+                    path: EditorStore.filePath,
+                    encoding: BottomStatusBarStore.fileEncoding
+                })
+            })
+            .on('end', () => {
+                ipcRenderer.send('endSaveFileChunk')
+            })
+    }
+
+    render() {
+        const { EditorStore, BottomStatusBarStore } = this.getState()
+        if (EditorStore.isSavingFile) this.codem.setOption('readOnly', true)
+        else this.codem.setOption('readOnly', false)
         if (EditorStore.filePath) {
             EditorStore.isEditorDirty
                 ? this.dispatch(setNewTitleBarText(`* ${EditorStore.filePath}`))
@@ -169,6 +182,17 @@ class EditorView extends View {
             this.codem.getDoc().clearHistory()
             this.dispatch(toggleShouldEditorReset(false))
         }
+
+        this.codem.setOption(
+            'lineSeparator',
+            BottomStatusBarStore.fileEndOfLineType === 'CRLF'
+                ? '\r\n'
+                : BottomStatusBarStore.fileEndOfLineType === 'LF'
+                ? '\n'
+                : BottomStatusBarStore.fileEndOfLineType === 'CR'
+                ? '\r'
+                : null
+        )
     }
 }
 

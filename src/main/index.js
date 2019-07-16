@@ -3,7 +3,6 @@
 import { app, ipcMain, dialog, shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
-import Throttle from 'throttle'
 import os from 'os'
 import MainWindow from './windows/MainWindow'
 import { getLineEnding } from '../common/utils'
@@ -12,6 +11,7 @@ import { getLineEnding } from '../common/utils'
 let mainWindow
 let initFile = null
 let currReadStream = null
+let currWriteStream = null
 
 if (!fs.existsSync(path.resolve(os.homedir(), 'notepad-fluent-config.json'))) {
     fs.writeFileSync(
@@ -76,9 +76,8 @@ ipcMain.on('loadFile', (e, d) => {
     })
 
     currReadStream
-        .pipe(new Throttle(1024 * 1024 * 1))
         .on('data', data => {
-            e.sender.send('fileLoadChunk', { data: data.toString() })
+            e.sender.send('fileLoadChunk', { data })
         })
         .once('data', data => {
             e.sender.send('setLineTerminator', {
@@ -94,8 +93,23 @@ ipcMain.on('cancelLoad', () => {
     currReadStream = null
 })
 
-ipcMain.on('saveFile', (e, d) => {
-    fs.writeFile(d.path, d.content, { encoding: d.encoding }, (err, d) => {
+ipcMain.on('saveFileChunk', (e, d) => {
+    if (!currWriteStream) {
+        currWriteStream = fs.createWriteStream(d.path, {
+            encoding: d.encoding
+        })
+    }
+    currWriteStream.write(d.data, d.encoding, err => {
+        if (err) {
+            e.sender.send('saveFailed')
+        }
+    })
+})
+ipcMain.on('endSaveFileChunk', e => {
+    if (!currWriteStream) return
+    currWriteStream.end(() => {
+        currWriteStream.destroy()
+        currWriteStream = null
         e.sender.send('saveFileDone')
     })
 })
