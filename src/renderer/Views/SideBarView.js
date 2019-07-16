@@ -8,6 +8,8 @@ import {
 import { ipcRenderer } from 'electron'
 import SideBarStore from '../Stores/SideBarStore'
 import EditorStore from '../Stores/EditorStore'
+import ConfirmDialogView from './ConfirmDialogView'
+import Dispatcher from '../Dispatcher'
 
 class SideBarView extends View {
     constructor(dispatch) {
@@ -58,8 +60,25 @@ class SideBarView extends View {
 
         this.closeFileBtn.addEventListener('click', e => {
             const { EditorStore } = this.getState()
-            if (EditorStore.hasFile) this.dispatch(closeOpenFile())
-            this.dispatch(resetBottomStatusBar())
+            if (EditorStore.hasFile) {
+                if (!EditorStore.isEditorDirty) {
+                    this.dispatch(closeOpenFile())
+                    this.dispatch(resetBottomStatusBar())
+                } else {
+                    const confirmDialog = new ConfirmDialogView(Dispatcher, {
+                        confirmMessage:
+                            'Tem a serteza que pretende fechar o ficheiro, antes de o gravar?',
+                        onCancel: () => {
+                            confirmDialog.onDestroy()
+                        },
+                        onConfirm: () => {
+                            confirmDialog.onDestroy()
+                            this.dispatch(closeOpenFile())
+                            this.dispatch(resetBottomStatusBar())
+                        }
+                    })
+                }
+            }
         })
 
         this.configBtn.addEventListener('click', () => {
