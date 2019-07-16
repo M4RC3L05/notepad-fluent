@@ -2,9 +2,6 @@ import View from './View'
 import {
     toggleSideBarAction,
     cancelFileLoad,
-    setNewTitleBarText,
-    toggleShouldEditorReset,
-    newFile,
     closeOpenFile,
     resetBottomStatusBar
 } from '../actions'

@@ -6,17 +6,67 @@
     </head>
     <body>
         <script>
-            let colors = localStorage.getItem('colors')
-            if (colors) {
-                colors = JSON.parse(colors)
+            ;(() => {
+                const { ipcRenderer } = require('electron')
+                const fs = require('fs')
+                const os = require('os')
+                const path = require('path')
 
-                for (const [key, style] of Object.entries(colors)) {
-                    document.documentElement.style.setProperty(
-                        '--' + key,
-                        style
-                    )
+                ipcRenderer.on('configChanged', () => applyConfig())
+                applyConfig()
+
+                function applyConfig() {
+                    let config = loadConfig()
+
+                    if (!config) return
+                    saveConfigToLocalStorage(config)
+
+                    if (localStorage.getItem('config'))
+                        config = JSON.parse(localStorage.getItem('config'))
+                    else config = null
+
+                    if (config.colors) applyColors(config.colors)
                 }
-            }
+
+                function loadConfig() {
+                    if (
+                        !fs.existsSync(
+                            path.resolve(
+                                os.homedir(),
+                                'notepad-fluent-config.json'
+                            )
+                        )
+                    )
+                        return null
+
+                    return fs
+                        .readFileSync(
+                            path.resolve(
+                                os.homedir(),
+                                'notepad-fluent-config.json'
+                            )
+                        )
+                        .toString()
+                }
+
+                function saveConfigToLocalStorage(config) {
+                    localStorage.removeItem('config')
+
+                    if (config && config.length > 0)
+                        localStorage.setItem('config', config)
+                }
+
+                function applyColors(colors) {
+                    if (!colors) return
+
+                    for (const [key, style] of Object.entries(colors)) {
+                        document.documentElement.style.setProperty(
+                            '--' + key,
+                            style
+                        )
+                    }
+                }
+            })()
         </script>
         <div class="top-bar">
             <div class="top-bar__title">Notepad Fluent</div>

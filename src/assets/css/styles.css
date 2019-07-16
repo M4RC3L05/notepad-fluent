@@ -113,7 +113,7 @@ html {
     line-height: 50px;
     text-align: left;
     width: calc(100% - 50px);
-    color: white;
+    color: var(--sidebar-text-color);
 }
 
 .side-bar.open .side-bar__description {

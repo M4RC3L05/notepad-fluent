@@ -43,8 +43,7 @@ app.on('activate', () => {
         mainWindow = MainWindow.create({
             frame: false,
             webPreferences: {
-                nodeIntegration: true,
-                preload: path.resolve(__static, 'preload.js')
+                nodeIntegration: true
             }
         })
 
@@ -59,8 +58,7 @@ app.on('ready', () => {
     mainWindow = MainWindow.create({
         frame: false,
         webPreferences: {
-            nodeIntegration: true,
-            preload: path.resolve(__static, 'preload.js')
+            nodeIntegration: true
         }
     })
 
@@ -131,3 +129,9 @@ ipcMain.on('minimise-app', () => mainWindow.getWindow().minimize())
 ipcMain.on('maximise-app', () => mainWindow.getWindow().maximize())
 ipcMain.on('decrease-app', () => mainWindow.getWindow().restore())
 ipcMain.on('close-app', () => app.quit())
+
+fs.watch(path.resolve(os.homedir(), 'notepad-fluent-config.json'), (e, f) => {
+    if (!mainWindow) return
+
+    mainWindow.getWindow().webContents.send('configChanged')
+})
