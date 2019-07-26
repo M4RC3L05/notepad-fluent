@@ -4,13 +4,15 @@ import SideBarView from './Views/SideBarView'
 import EditorView from './Views/EditorView'
 import TitleBarView from './Views/TitleBarView'
 import BottomStatusBarView from './Views/BottomStatusBarView'
+import TabsView from './Views/TabsView'
 
 const start = () => {
     console.log('Starting...')
     const then = performance.now()
-    SideBarView.create(Dispatcher)
-    EditorView.create(Dispatcher)
     TitleBarView.create(Dispatcher)
+    SideBarView.create(Dispatcher)
+    TabsView.create(Dispatcher)
+    EditorView.create(Dispatcher)
     BottomStatusBarView.create(Dispatcher)
     console.log('Start take: ', performance.now() - then)
 }
