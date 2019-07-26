@@ -147,5 +147,33 @@ ipcMain.on('close-app', () => app.quit())
 fs.watch(path.resolve(os.homedir(), 'notepad-fluent-config.json'), (e, f) => {
     if (!mainWindow) return
 
-    mainWindow.getWindow().webContents.send('configChanged')
+    fs.readFile(
+        path.resolve(os.homedir(), 'notepad-fluent-config.json'),
+        null,
+        (err, data) => {
+            if (err) return
+            mainWindow
+                .getWindow()
+                .webContents.send('configChanged', { config: data.toString() })
+        }
+    )
+})
+
+ipcMain.on('getConfig', e => {
+    fs.exists(
+        path.resolve(os.homedir(), 'notepad-fluent-config.json'),
+        exists => {
+            if (!exists) return
+
+            fs.readFile(
+                path.resolve(os.homedir(), 'notepad-fluent-config.json'),
+                null,
+                (err, data) => {
+                    if (err) return
+
+                    e.sender.send('configChanged', { config: data.toString() })
+                }
+            )
+        }
+    )
 })

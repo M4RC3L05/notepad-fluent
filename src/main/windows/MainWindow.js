@@ -53,7 +53,7 @@ class MainWindow {
     }
 
     start() {
-        console.log('creating2')
+        console.log('creating2', this._window)
         if (this._window) return
         this.createWindow()
     }
