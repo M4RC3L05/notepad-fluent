@@ -20,6 +20,8 @@ import {
 import EditorStore from '../Stores/EditorStore'
 import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 import TabsStore, { tabFactory } from '../Stores/TabsStore'
+import ConfirmDialogView from './ConfirmDialogView'
+import Dispatcher from '../Dispatcher'
 
 class EditorView extends View {
     static SCROLL_INFO_BY_TABS = {}
@@ -101,31 +103,89 @@ class EditorView extends View {
     }
 
     setUpListeners() {
-        // window.addEventListener('keydown', e => {
-        //     e.preventDefault()
-        //     if (e.ctrlKey && e.keyCode === 84) {
-        //         this.dispatch(
-        //             createNewTab(
-        //                 tabFactory('Untitled', 'Untitled', true, false, false)
-        //             )
-        //         )
-        //         this.dispatch(setFileEOLType('CRLF'))
-        //         this.dispatch(setFileEncodingType('UTF-8'))
-        //     }
+        window.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.keyCode === 84) {
+                e.preventDefault()
+                const { TabsStore } = this.getState()
 
-        //     if (e.ctrlKey && e.keyCode === 87) {
-        //         const { TabsStore } = this.getState()
+                const tab = TabsStore.tabs.find(tab => tab.isActive)
 
-        //         const activeTab = TabsStore.tabs.find(tab => tab.isActive)
-        //         if (activeTab) {
-        //             if (TabsStore.tabs.length <= 1) {
-        //                 this.dispatch(setFileEOLType(''))
-        //                 this.dispatch(setFileEncodingType(''))
-        //             }
-        //             this.dispatch(closeOpenTab(activeTab.id))
-        //         }
-        //     }
-        // })
+                if (tab) {
+                    if (tab.isDirty) {
+                        const confirmDialog = ConfirmDialogView.create(
+                            Dispatcher,
+                            {
+                                confirmMessage:
+                                    'Tem a certesa que pretende mudar de ficheiro sem guardar?',
+                                onConfirm: () => {
+                                    this.dispatch(
+                                        createNewTab(
+                                            tabFactory(
+                                                'Untitled',
+                                                'Untitled',
+                                                true,
+                                                false,
+                                                false
+                                            )
+                                        )
+                                    )
+                                    this.dispatch(setFileEOLType('CRLF'))
+                                    this.dispatch(setFileEncodingType('UTF-8'))
+                                    confirmDialog.onDestroy()
+                                },
+                                onCancel: () => confirmDialog.onDestroy()
+                            }
+                        )
+                    } else {
+                        this.dispatch(
+                            createNewTab(
+                                tabFactory(
+                                    'Untitled',
+                                    'Untitled',
+                                    true,
+                                    false,
+                                    false
+                                )
+                            )
+                        )
+                        this.dispatch(setFileEOLType('CRLF'))
+                        this.dispatch(setFileEncodingType('UTF-8'))
+                    }
+                }
+            } else if (e.ctrlKey && e.keyCode === 87) {
+                e.preventDefault()
+                const { TabsStore } = this.getState()
+
+                const tab = TabsStore.tabs.find(tab => tab.isActive)
+
+                if (tab) {
+                    if (tab.isDirty) {
+                        const confirmDialog = ConfirmDialogView.create(
+                            Dispatcher,
+                            {
+                                confirmMessage:
+                                    'Tem a certesa que pretende fechar o ficheiro sem guardar?',
+                                onConfirm: () => {
+                                    if (TabsStore.tabs.length <= 1) {
+                                        this.dispatch(setFileEOLType(''))
+                                        this.dispatch(setFileEncodingType(''))
+                                    }
+                                    this.dispatch(closeOpenTab(tab.id))
+                                    confirmDialog.onDestroy()
+                                },
+                                onCancel: () => confirmDialog.onDestroy()
+                            }
+                        )
+                    } else {
+                        if (TabsStore.tabs.length <= 1) {
+                            this.dispatch(setFileEOLType(''))
+                            this.dispatch(setFileEncodingType(''))
+                        }
+                        this.dispatch(closeOpenTab(tab.id))
+                    }
+                }
+            }
+        })
         this.editorWrapper.addEventListener('dragover', e => {
             e.preventDefault()
             this.editorWrapper.classList.add('file-hover')
@@ -239,20 +299,28 @@ class EditorView extends View {
             tab => tab.displayName === displayName && tab.fullName === fullName
         )
 
+        if (
+            alreadyATab &&
+            alreadyATab.displayName === 'Untitled' &&
+            alreadyATab.fullName === 'Untitled' &&
+            !alreadyATab.isFile
+        )
+            return
+
         if (alreadyATab) {
             this.dispatch(activateTab(alreadyATab.id))
             return
         }
 
+        const currTab = TabsStore.tabs.find(tab => tab.isActive)
+
         if (
-            TabsStore.tabs.length === 1 &&
-            TabsStore.tabs[0].displayName === 'Untitled' &&
-            TabsStore.tabs[0].fullName === 'Untitled' &&
-            !TabsStore.tabs[0].isFile
+            currTab &&
+            currTab.displayName === 'Untitled' &&
+            currTab.fullName === 'Untitled' &&
+            !currTab.isFile
         ) {
-            this.dispatch(
-                updateTab(TabsStore.tabs[0].id, { displayName, fullName })
-            )
+            this.dispatch(updateTab(currTab.id, { displayName, fullName }))
             return
         }
 
