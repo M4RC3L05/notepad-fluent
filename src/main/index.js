@@ -115,9 +115,12 @@ ipcMain.on('endSaveFileChunk', e => {
 })
 
 ipcMain.on('openFileDialog', e => {
-    dialog.showOpenDialog({ properties: ['openFile'] }, path => {
-        if (!path || path.length <= 0) return
-        e.sender.send('newFileOpen', { path: path[0] })
+    dialog.showOpenDialog({ properties: ['openFile'] }, filePath => {
+        if (!filePath || filePath.length <= 0) return
+        e.sender.send('newFileOpen', {
+            path: filePath[0],
+            displayName: path.basename(filePath[0])
+        })
     })
 })
 
@@ -125,11 +128,17 @@ ipcMain.on('createFile', e => {
     dialog.showSaveDialog(r => {
         if (!r) return
 
-        e.sender.send('newFileCreated', { path: r })
+        e.sender.send('newFileCreated', {
+            path: r,
+            displayName: path.basename(r)
+        })
     })
 })
 ipcMain.on('check-initfile', e => {
-    if (!initFile) return
+    if (!initFile) {
+        e.sender.send('check-initfile', { path: null })
+        return
+    }
     const tmpInitFile = initFile
     e.sender.send('check-initfile', tmpInitFile)
     initFile = null

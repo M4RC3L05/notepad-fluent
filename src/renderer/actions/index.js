@@ -15,7 +15,13 @@ import {
     SET_FILE_ENCODING_TYPE,
     SET_FILE_EOL_TYPE,
     RESET_BOTTOM_STATUS_BAR,
-    FILE_CONTENT_PRESTINE_ACTION
+    FILE_CONTENT_PRESTINE_ACTION,
+    CREATE_NEW_TAB,
+    UPDATE_TAB,
+    CLOSE_TAB,
+    SET_TAB_DIRTY_STATE,
+    MARK_TABS_AS_NOT_ACTIVE,
+    ACTIVATE_TAB
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -92,4 +98,33 @@ export const resetBottomStatusBar = () => ({
 
 export const fileContentPrestine = () => ({
     type: FILE_CONTENT_PRESTINE_ACTION
+})
+
+export const createNewTab = tab => ({
+    type: CREATE_NEW_TAB,
+    payload: tab
+})
+
+export const updateTab = (id, args) => ({
+    type: UPDATE_TAB,
+    payload: { id, data: args }
+})
+
+export const closeOpenTab = id => ({
+    type: CLOSE_TAB,
+    payload: id
+})
+
+export const setTabDirty = (id, isDirty) => ({
+    type: SET_TAB_DIRTY_STATE,
+    payload: { id, isDirty }
+})
+
+export const maskAllAsNotActive = () => ({
+    type: MARK_TABS_AS_NOT_ACTIVE
+})
+
+export const activateTab = id => ({
+    type: ACTIVATE_TAB,
+    payload: id
 })

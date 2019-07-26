@@ -1,6 +1,6 @@
 import View from './View'
 import TabsStore from '../Stores/TabsStore'
-import uuid from '../utils/uuid'
+import { closeOpenTab, activateTab } from '../actions'
 
 class TabsView extends View {
     constructor(dispatcher) {
@@ -11,6 +11,8 @@ class TabsView extends View {
         this.createTabElement = this.createTabElement.bind(this)
         this.onTabEnter = this.onTabEnter.bind(this)
         this.onTabLeave = this.onTabLeave.bind(this)
+        this.closeTab = this.closeTab.bind(this)
+        this.onTabClick = this.onTabClick.bind(this)
 
         this.setUpUI()
         this.setUpListeners()
@@ -38,6 +40,11 @@ class TabsView extends View {
         const tab = document.createElement('div')
         tab.setAttribute('data-key', id)
         tab.classList.add('tab')
+
+        tab.addEventListener('mouseenter', this.onTabEnter)
+        tab.addEventListener('mouseleave', this.onTabLeave)
+        tab.addEventListener('click', this.onTabClick)
+
         if (isActive) tab.classList.add('active')
 
         if (isDirty) {
@@ -51,6 +58,8 @@ class TabsView extends View {
 
         const tabIndicator = document.createElement('div')
         tabIndicator.classList.add('tab__indicator')
+        tabIndicator.addEventListener('click', this.closeTab)
+
         tab.appendChild(tabTitle)
         tab.appendChild(tabIndicator)
 
@@ -76,8 +85,6 @@ class TabsView extends View {
 
         const fragment = document.createDocumentFragment()
         tabs.map(tab => this.createTabElement(tab)).forEach(tab => {
-            tab.addEventListener('mouseenter', this.onTabEnter)
-            tab.addEventListener('mouseleave', this.onTabLeave)
             fragment.appendChild(tab)
         })
 
@@ -88,6 +95,8 @@ class TabsView extends View {
         const tab = this.getState().TabsStore.tabs.find(
             tab => tab.id === e.target.getAttribute('data-key')
         )
+
+        if (!tab) return
 
         if (!e.target.classList.contains('indicator-visible'))
             e.target.classList.add('indicator-visible')
@@ -103,6 +112,8 @@ class TabsView extends View {
             tab => tab.id === e.target.getAttribute('data-key')
         )
 
+        if (!tab) return
+
         if (tab.isDirty) {
             if (!e.target.classList.contains('dirty'))
                 e.target.classList.add('dirty')
@@ -114,9 +125,24 @@ class TabsView extends View {
             e.target.classList.remove('indicator-visible')
     }
 
+    onTabClick(e) {
+        if (!e.target.getAttribute('data-key'))
+            this.dispatch(
+                activateTab(e.target.parentNode.getAttribute('data-key'))
+            )
+        else this.dispatch(activateTab(e.target.getAttribute('data-key')))
+    }
+
+    closeTab(e) {
+        e.stopPropagation()
+        this.dispatch(
+            closeOpenTab(e.target.parentNode.getAttribute('data-key'))
+        )
+    }
+
     render() {
         const { TabsStore } = this.getState()
-
+        console.log(TabsStore)
         this.clearallTabs()
         this.displayTabs(TabsStore.tabs)
     }

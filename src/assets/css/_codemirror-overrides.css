@@ -7,6 +7,15 @@
     width: 100%;
     padding-right: 5px;
     flex: 1;
+    height: 100%;
+}
+
+#editorPlaceholder {
+    background: transparent;
+    color: var(--text-color);
+    width: 100%;
+    padding-right: 5px;
+    flex: 1;
     margin-top: 10px;
     height: 100%;
 }
