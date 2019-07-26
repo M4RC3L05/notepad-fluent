@@ -151,6 +151,20 @@ class EditorView extends View {
                         this.dispatch(setFileEOLType('CRLF'))
                         this.dispatch(setFileEncodingType('UTF-8'))
                     }
+                } else {
+                    this.dispatch(
+                        createNewTab(
+                            tabFactory(
+                                'Untitled',
+                                'Untitled',
+                                true,
+                                false,
+                                false
+                            )
+                        )
+                    )
+                    this.dispatch(setFileEOLType('CRLF'))
+                    this.dispatch(setFileEncodingType('UTF-8'))
                 }
             } else if (e.ctrlKey && e.keyCode === 87) {
                 e.preventDefault()

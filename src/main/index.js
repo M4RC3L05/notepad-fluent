@@ -152,11 +152,14 @@ ipcMain.on('createFile', e => {
 })
 ipcMain.on('check-initfile', e => {
     if (!initFile) {
-        e.sender.send('check-initfile', { path: null })
+        e.sender.send('check-initfile', { path: null, displayName: null })
         return
     }
     const tmpInitFile = initFile
-    e.sender.send('check-initfile', tmpInitFile)
+    e.sender.send('check-initfile', {
+        ...tmpInitFile,
+        displayName: path.basename(tmpInitFile.path)
+    })
     initFile = null
 })
 ipcMain.on('openConfigFile', () => {
