@@ -4,7 +4,8 @@ import {
     UPDATE_TAB,
     CLOSE_TAB,
     SET_TAB_DIRTY_STATE,
-    ACTIVATE_TAB
+    ACTIVATE_TAB,
+    TABS_IS_LOADING_FILE
 } from '../actions/types'
 import uuid from '../utils/uuid'
 
@@ -23,7 +24,8 @@ class TabsStore extends Store {
 
     getInitialState() {
         return {
-            tabs: []
+            tabs: [],
+            isLoadingFile: false
         }
     }
 
@@ -82,6 +84,9 @@ class TabsStore extends Store {
                             : { ...tab, isActive: false }
                     )
                 }
+
+            case TABS_IS_LOADING_FILE:
+                return { ...state, isLoadingFile: action.payload }
 
             default:
                 return state

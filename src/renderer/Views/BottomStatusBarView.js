@@ -1,6 +1,6 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
-import { setFileEOLType } from '../actions'
+import { setFileEOLType, setFileEncodingType } from '../actions'
 import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 
 class BottomStatusBarView extends View {
@@ -36,6 +36,7 @@ class BottomStatusBarView extends View {
     setUpListeners() {
         ipcRenderer.on('setLineTerminator', (e, d) => {
             this.dispatch(setFileEOLType(d.eolType))
+            this.dispatch(setFileEncodingType('UTF-8'))
         })
     }
 

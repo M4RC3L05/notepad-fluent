@@ -12,13 +12,18 @@ import {
     setTabDirty,
     updateTab,
     setFileEOLType,
-    activateTab
+    activateTab,
+    tabsIsLoadingFile,
+    closeOpenTab,
+    setFileEncodingType
 } from '../actions'
 import EditorStore from '../Stores/EditorStore'
 import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 import TabsStore, { tabFactory } from '../Stores/TabsStore'
 
 class EditorView extends View {
+    static SCROLL_INFO_BY_TABS = {}
+
     constructor(dispatcher) {
         super(dispatcher)
         this.setUpUI = this.setUpUI.bind(this)
@@ -62,7 +67,7 @@ class EditorView extends View {
                 if (EditorStore.isSavingFile) return
                 if (!activeTab.isDirty) return
 
-                if (!activeTab.fullName || activeTab.fullName === 'Untitled') {
+                if (activeTab.fullName === 'Untitled') {
                     this.dispatch(startSaveFileAction())
                     ipcRenderer.send('createFile')
                     return
@@ -85,9 +90,42 @@ class EditorView extends View {
                 else this.dispatch(setTabDirty(activeTab.id, false))
             }
         })
+
+        this.codem.on('scroll', cm => {
+            if (this.activeTab) {
+                EditorView.SCROLL_INFO_BY_TABS[
+                    this.activeTab.id
+                ] = cm.getScrollInfo()
+            }
+        })
     }
 
     setUpListeners() {
+        // window.addEventListener('keydown', e => {
+        //     e.preventDefault()
+        //     if (e.ctrlKey && e.keyCode === 84) {
+        //         this.dispatch(
+        //             createNewTab(
+        //                 tabFactory('Untitled', 'Untitled', true, false, false)
+        //             )
+        //         )
+        //         this.dispatch(setFileEOLType('CRLF'))
+        //         this.dispatch(setFileEncodingType('UTF-8'))
+        //     }
+
+        //     if (e.ctrlKey && e.keyCode === 87) {
+        //         const { TabsStore } = this.getState()
+
+        //         const activeTab = TabsStore.tabs.find(tab => tab.isActive)
+        //         if (activeTab) {
+        //             if (TabsStore.tabs.length <= 1) {
+        //                 this.dispatch(setFileEOLType(''))
+        //                 this.dispatch(setFileEncodingType(''))
+        //             }
+        //             this.dispatch(closeOpenTab(activeTab.id))
+        //         }
+        //     }
+        // })
         this.editorWrapper.addEventListener('dragover', e => {
             e.preventDefault()
             this.editorWrapper.classList.add('file-hover')
@@ -118,7 +156,9 @@ class EditorView extends View {
             this.codem.getDoc().clearHistory()
             this.dispatch(doneSaveFileAction())
             const activeTab = TabsStore.tabs.find(tab => tab.isActive)
+
             this.dispatch(setTabDirty(activeTab.id, false))
+            this.dispatch(tabsIsLoadingFile(false))
         })
 
         ipcRenderer.on('fileLoadChunk', (e, d) => {
@@ -133,6 +173,15 @@ class EditorView extends View {
         ipcRenderer.on('fileLoadDone', (e, d) => {
             this.codem.getDoc().clearHistory()
             this.dispatch(doneLoadFileAction())
+
+            if (this.activeTab) {
+                const scrollInfo =
+                    EditorView.SCROLL_INFO_BY_TABS[this.activeTab.id]
+
+                if (scrollInfo)
+                    this.codem.scrollTo(scrollInfo.left, scrollInfo.top)
+            }
+            this.dispatch(tabsIsLoadingFile(false))
         })
 
         ipcRenderer.on('newFileOpen', (e, d) => {
@@ -149,13 +198,14 @@ class EditorView extends View {
                 return
             }
 
-            if (displayName === 'Untitled') {
-                this.shouldCreateTab(displayName, path)
+            if (displayName === 'Untitled' && path === 'Untitled') {
+                this.shouldCreateTab(displayName, path, false)
                 this.dispatch(setFileEOLType('CRLF'))
+                this.dispatch(setFileEncodingType('UTF-8'))
                 return
             }
-            this.shouldCreateTab(displayName, path)
-
+            this.shouldCreateTab(displayName, path, true)
+            this.dispatch(tabsIsLoadingFile(true))
             this.dispatch(startLoadFileAction())
             ipcRenderer.send('loadFile', {
                 path
@@ -163,7 +213,8 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('newFileCreated', (e, d) => {
-            this.shouldCreateTab(d.displayName, d.path)
+            this.dispatch(tabsIsLoadingFile(true))
+            this.shouldCreateTab(d.displayName, d.path, true)
             this.saveContents()
         })
 
@@ -171,7 +222,7 @@ class EditorView extends View {
             if (!d.path) {
                 this.dispatch(
                     createNewTab(
-                        tabFactory('Untitled', 'Untitled', true, false)
+                        tabFactory('Untitled', 'Untitled', true, false, false)
                     )
                 )
                 return
@@ -181,26 +232,33 @@ class EditorView extends View {
         ipcRenderer.send('check-initfile', {})
     }
 
-    shouldCreateTab(displayName, fullName) {
+    shouldCreateTab(displayName, fullName, isFile) {
         const { TabsStore } = this.getState()
 
-        const activeTab = TabsStore.tabs.find(tab => tab.isActive)
-        if (!activeTab) {
-            if (TabsStore.tabs.length > 0)
-                this.dispatch(
-                    activateTab(TabsStore.tabs[TabsStore.tabs.length - 1].id)
-                )
-            else
-                this.dispatch(
-                    createNewTab(tabFactory(displayName, fullName, true, false))
-                )
-        } else if (activeTab.displayName === 'Untitled' && !activeTab.isDirty) {
-            this.dispatch(updateTab(activeTab.id, { displayName, fullName }))
-        } else if (this.activeTab !== activeTab) {
+        const alreadyATab = TabsStore.tabs.find(
+            tab => tab.displayName === displayName && tab.fullName === fullName
+        )
+
+        if (alreadyATab) {
+            this.dispatch(activateTab(alreadyATab.id))
+            return
+        }
+
+        if (
+            TabsStore.tabs.length === 1 &&
+            TabsStore.tabs[0].displayName === 'Untitled' &&
+            TabsStore.tabs[0].fullName === 'Untitled' &&
+            !TabsStore.tabs[0].isFile
+        ) {
             this.dispatch(
-                createNewTab(tabFactory(displayName, fullName, true, false))
+                updateTab(TabsStore.tabs[0].id, { displayName, fullName })
             )
-        } else this.dispatch(updateTab(activeTab.id, { displayName, fullName }))
+            return
+        }
+
+        this.dispatch(
+            createNewTab(tabFactory(displayName, fullName, true, false, isFile))
+        )
     }
 
     saveContents() {
@@ -248,6 +306,7 @@ class EditorView extends View {
             const activeTab = TabsStore.tabs.find(tab => tab.isActive)
             if (activeTab) {
                 if (!this.activeTab || this.activeTab.id !== activeTab.id) {
+                    console.log('destroy')
                     this.onDestroy()
                     this.activeTab = activeTab
                     this.createEditorInstance()

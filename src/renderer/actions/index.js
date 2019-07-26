@@ -21,7 +21,8 @@ import {
     CLOSE_TAB,
     SET_TAB_DIRTY_STATE,
     MARK_TABS_AS_NOT_ACTIVE,
-    ACTIVATE_TAB
+    ACTIVATE_TAB,
+    TABS_IS_LOADING_FILE
 } from './types'
 
 export const toggleSideBarAction = () => ({
@@ -127,4 +128,9 @@ export const maskAllAsNotActive = () => ({
 export const activateTab = id => ({
     type: ACTIVATE_TAB,
     payload: id
+})
+
+export const tabsIsLoadingFile = status => ({
+    type: TABS_IS_LOADING_FILE,
+    payload: status
 })

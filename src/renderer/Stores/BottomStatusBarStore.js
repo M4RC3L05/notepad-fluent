@@ -1,5 +1,9 @@
 import Store from './Store'
-import { SET_FILE_EOL_TYPE, RESET_BOTTOM_STATUS_BAR } from '../actions/types'
+import {
+    SET_FILE_EOL_TYPE,
+    RESET_BOTTOM_STATUS_BAR,
+    SET_FILE_ENCODING_TYPE
+} from '../actions/types'
 
 class BottomStatusBarStore extends Store {
     constructor() {
@@ -27,6 +31,8 @@ class BottomStatusBarStore extends Store {
                 return { ...state, fileEndOfLineType: action.payload }
             case RESET_BOTTOM_STATUS_BAR:
                 return { ...this.getInitialState() }
+            case SET_FILE_ENCODING_TYPE:
+                return { ...state, fileEncoding: action.payload }
             default:
                 return state
         }

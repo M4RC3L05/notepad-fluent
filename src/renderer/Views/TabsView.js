@@ -1,6 +1,11 @@
 import View from './View'
 import TabsStore from '../Stores/TabsStore'
-import { closeOpenTab, activateTab } from '../actions'
+import {
+    closeOpenTab,
+    activateTab,
+    setFileEOLType,
+    setFileEncodingType
+} from '../actions'
 import ConfirmDialogView from './ConfirmDialogView'
 import Dispatcher from '../Dispatcher'
 
@@ -128,6 +133,9 @@ class TabsView extends View {
     }
 
     onTabClick(e) {
+        const { TabsStore } = this.getState()
+        if (TabsStore.isLoadingFile) return
+
         if (!e.target.getAttribute('data-key'))
             this.dispatch(
                 activateTab(e.target.parentNode.getAttribute('data-key'))
@@ -138,6 +146,7 @@ class TabsView extends View {
     closeTab(e) {
         e.stopPropagation()
         const { TabsStore } = this.getState()
+        if (TabsStore.isLoadingFile) return
 
         const tab = TabsStore.tabs.find(
             tab => tab.id === e.target.parentNode.getAttribute('data-key')
@@ -148,6 +157,10 @@ class TabsView extends View {
                 confirmMessage:
                     'Tem a certesa que pretende fechar o ficheiro sem guardar?',
                 onConfirm: () => {
+                    if (TabsStore.tabs.length <= 1) {
+                        this.dispatch(setFileEOLType(''))
+                        this.dispatch(setFileEncodingType(''))
+                    }
                     this.dispatch(
                         closeOpenTab(
                             e.target.parentNode.getAttribute('data-key')
@@ -157,10 +170,15 @@ class TabsView extends View {
                 },
                 onCancel: () => confirmDialog.onDestroy()
             })
-        } else
+        } else {
+            if (TabsStore.tabs.length <= 1) {
+                this.dispatch(setFileEOLType(''))
+                this.dispatch(setFileEncodingType(''))
+            }
             this.dispatch(
                 closeOpenTab(e.target.parentNode.getAttribute('data-key'))
             )
+        }
     }
 
     render() {
