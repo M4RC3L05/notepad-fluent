@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron'
 import { setFileEOLType } from '../actions'
 import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 
-class BottomStatusBar extends View {
+class BottomStatusBarView extends View {
     constructor(dispatcher) {
         super(dispatcher)
 
@@ -21,7 +21,7 @@ class BottomStatusBar extends View {
     }
 
     static create(...props) {
-        return new BottomStatusBar(...props)
+        return new BottomStatusBarView(...props)
     }
 
     setUpUI() {
@@ -47,4 +47,4 @@ class BottomStatusBar extends View {
     }
 }
 
-export default BottomStatusBar
+export default BottomStatusBarView

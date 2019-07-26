@@ -3,7 +3,7 @@ import Dispatcher from './Dispatcher'
 import SideBarView from './Views/SideBarView'
 import EditorView from './Views/EditorView'
 import TitleBarView from './Views/TitleBarView'
-import BottomStatusBar from './Views/BottomStatusBar'
+import BottomStatusBarView from './Views/BottomStatusBarView'
 
 const start = () => {
     console.log('Starting...')
@@ -11,7 +11,7 @@ const start = () => {
     SideBarView.create(Dispatcher)
     EditorView.create(Dispatcher)
     TitleBarView.create(Dispatcher)
-    BottomStatusBar.create(Dispatcher)
+    BottomStatusBarView.create(Dispatcher)
     console.log('Start take: ', performance.now() - then)
 }
 document.addEventListener('DOMContentLoaded', start)

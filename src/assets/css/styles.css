@@ -315,3 +315,79 @@ html {
 .confirm-dialog__controls {
     margin-top: 40px;
 }
+
+.tabs {
+    overflow-x: scroll;
+    height: 32px;
+    margin-top: 32px;
+    display: flex;
+    background: var(--tabs-bg);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.25);
+}
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tabs .tab {
+    cursor: pointer;
+    max-width: 200px;
+    min-width: 100px;
+    background: var(--tab-bg-color);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0px 10px;
+    overflow: hidden;
+    justify-content: center;
+    border-bottom: 2px solid transparent;
+}
+
+.tabs .tab.active {
+    border-bottom: 2px solid var(--tab-active-indicator-color);
+}
+
+.tab__title {
+    color: var(--tab-text-color);
+    flex: 1;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+
+.tab__indicator {
+    color: var(--tab-text-color);
+    font-weight: bold;
+    visibility: hidden;
+    height: 16px;
+    width: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab__indicator::after {
+    display: block;
+    content: ' ';
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    mask: url('./../icons/close_tab.svg') no-repeat 50% 50%;
+    -webkit-mask: url('./../icons/close_tab.svg') no-repeat 50% 50%;
+}
+
+.tab.dirty .tab__indicator::after {
+    content: ' ';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    mask: url('./../icons/dirty_tab.svg') no-repeat 50% 50%;
+    -webkit-mask: url('./../icons/dirty_tab.svg') no-repeat 50% 50%;
+}
+
+.tab.indicator-visible .tab__indicator {
+    visibility: visible;
+}
