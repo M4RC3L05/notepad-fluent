@@ -5,6 +5,32 @@
         <title>Notepad</title>
     </head>
     <body>
+        <script>
+            ;(() => {
+                const { ipcRenderer } = require('electron')
+
+                function applyConfig(config) {
+                    if (!config) return
+
+                    applyColors(config.colors)
+                }
+
+                function applyColors(colors) {
+                    if (!colors) return
+                    for (const [key, style] of Object.entries(colors))
+                        document.documentElement.style.setProperty(
+                            '--' + key,
+                            style
+                        )
+                }
+
+                ipcRenderer.on('configChanged', (e, { config }) => {
+                    config && applyConfig(JSON.parse(config))
+                })
+                const { config } = ipcRenderer.sendSync('getConfigStart')
+                config && applyConfig(JSON.parse(config))
+            })()
+        </script>
         <div class="top-bar">
             <div class="top-bar__title">Notepad Fluent</div>
             <div class="top-bar__buttons">

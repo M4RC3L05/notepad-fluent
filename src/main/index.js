@@ -159,21 +159,23 @@ fs.watch(path.resolve(os.homedir(), 'notepad-fluent-config.json'), (e, f) => {
     )
 })
 
-ipcMain.on('getConfig', e => {
-    fs.exists(
-        path.resolve(os.homedir(), 'notepad-fluent-config.json'),
-        exists => {
-            if (!exists) return
-
-            fs.readFile(
-                path.resolve(os.homedir(), 'notepad-fluent-config.json'),
-                null,
-                (err, data) => {
-                    if (err) return
-
-                    e.sender.send('configChanged', { config: data.toString() })
-                }
+ipcMain.on('getConfigStart', e => {
+    try {
+        if (
+            !fs.existsSync(
+                path.resolve(os.homedir(), 'notepad-fluent-config.json')
             )
+        )
+            return
+
+        e.returnValue = {
+            config: fs
+                .readFileSync(
+                    path.resolve(os.homedir(), 'notepad-fluent-config.json')
+                )
+                .toString()
         }
-    )
+    } catch {
+        return
+    }
 })

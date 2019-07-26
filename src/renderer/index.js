@@ -6,7 +6,6 @@ import TitleBarView from './Views/TitleBarView'
 import BottomStatusBar from './Views/BottomStatusBar'
 
 const start = () => {
-    require('./config-loader')
     const then = performance.now()
     console.log('start creating')
     SideBarView.create(Dispatcher)
