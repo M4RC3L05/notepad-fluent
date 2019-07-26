@@ -165,8 +165,10 @@ ipcMain.on('getConfigStart', e => {
             !fs.existsSync(
                 path.resolve(os.homedir(), 'notepad-fluent-config.json')
             )
-        )
+        ) {
+            e.returnValue = null
             return
+        }
 
         e.returnValue = {
             config: fs
@@ -176,6 +178,6 @@ ipcMain.on('getConfigStart', e => {
                 .toString()
         }
     } catch {
-        return
+        e.returnValue = null
     }
 })
