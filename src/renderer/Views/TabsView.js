@@ -1,6 +1,8 @@
 import View from './View'
 import TabsStore from '../Stores/TabsStore'
 import { closeOpenTab, activateTab } from '../actions'
+import ConfirmDialogView from './ConfirmDialogView'
+import Dispatcher from '../Dispatcher'
 
 class TabsView extends View {
     constructor(dispatcher) {
@@ -135,9 +137,30 @@ class TabsView extends View {
 
     closeTab(e) {
         e.stopPropagation()
-        this.dispatch(
-            closeOpenTab(e.target.parentNode.getAttribute('data-key'))
+        const { TabsStore } = this.getState()
+
+        const tab = TabsStore.tabs.find(
+            tab => tab.id === e.target.parentNode.getAttribute('data-key')
         )
+
+        if (tab.isDirty) {
+            const confirmDialog = ConfirmDialogView.create(Dispatcher, {
+                confirmMessage:
+                    'Tem a certesa que pretende fechar o ficheiro sem guardar?',
+                onConfirm: () => {
+                    this.dispatch(
+                        closeOpenTab(
+                            e.target.parentNode.getAttribute('data-key')
+                        )
+                    )
+                    confirmDialog.onDestroy()
+                },
+                onCancel: () => confirmDialog.onDestroy()
+            })
+        } else
+            this.dispatch(
+                closeOpenTab(e.target.parentNode.getAttribute('data-key'))
+            )
     }
 
     render() {
