@@ -1,15 +1,8 @@
 import View from './View'
-import {
-    toggleSideBarAction,
-    cancelFileLoad,
-    closeOpenFile,
-    resetBottomStatusBar
-} from '../actions'
+import { toggleSideBarAction, cancelFileLoad } from '../actions'
 import { ipcRenderer } from 'electron'
 import SideBarStore from '../Stores/SideBarStore'
-import EditorStore from '../Stores/EditorStore'
-import ConfirmDialogView from './ConfirmDialogView'
-import Dispatcher from '../Dispatcher'
+import TabsStore from '../Stores/TabsStore'
 
 class SideBarView extends View {
     constructor(dispatch) {
@@ -29,14 +22,13 @@ class SideBarView extends View {
     }
 
     getStores() {
-        return [SideBarStore, EditorStore]
+        return [SideBarStore, TabsStore]
     }
 
     setUpUI() {
         this.navToggler = document.querySelector('.side-bar__item#menu')
         this.openFileBtn = document.querySelector('.side-bar__item#file')
         this.addFileBtn = document.querySelector('.side-bar__item#add_file')
-        this.closeFileBtn = document.querySelector('.side-bar__item#close_file')
         this.configBtn = document.querySelector('.side-bar__item#settings')
         this.sidebar = document.querySelector('.side-bar')
     }
@@ -58,43 +50,17 @@ class SideBarView extends View {
             ipcRenderer.send('createFile')
         })
 
-        this.closeFileBtn.addEventListener('click', e => {
-            const { EditorStore } = this.getState()
-            if (EditorStore.hasFile) {
-                if (!EditorStore.isEditorDirty) {
-                    this.dispatch(closeOpenFile())
-                    this.dispatch(resetBottomStatusBar())
-                } else {
-                    const confirmDialog = new ConfirmDialogView(Dispatcher, {
-                        confirmMessage:
-                            'Tem a serteza que pretende fechar o ficheiro, antes de o gravar?',
-                        onCancel: () => {
-                            confirmDialog.onDestroy()
-                        },
-                        onConfirm: () => {
-                            confirmDialog.onDestroy()
-                            this.dispatch(closeOpenFile())
-                            this.dispatch(resetBottomStatusBar())
-                        }
-                    })
-                }
-            }
-        })
-
         this.configBtn.addEventListener('click', () => {
             ipcRenderer.send('openConfigFile')
         })
     }
 
     render() {
-        const { SideBarStore, EditorStore } = this.getState()
+        const { SideBarStore } = this.getState()
 
         SideBarStore.isOpen
             ? this.sidebar.classList.add('open')
             : this.sidebar.classList.remove('open')
-
-        if (EditorStore.hasFile) this.closeFileBtn.style.display = 'block'
-        else this.closeFileBtn.style.display = 'none'
     }
 }
 

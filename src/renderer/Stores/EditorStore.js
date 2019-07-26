@@ -31,13 +31,8 @@ class EditorStore extends Store {
     getInitialState() {
         return {
             isLoadingFile: false,
-            actionMessage: '',
-            filePath: '',
-            isEditorDirty: false,
             isSavingFile: false,
-            shouldResetEditor: false,
-            hasFile: false,
-            fileLength: 0
+            shouldResetEditor: false
         }
     }
 

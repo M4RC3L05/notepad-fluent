@@ -142,7 +142,6 @@ class TabsView extends View {
 
     render() {
         const { TabsStore } = this.getState()
-        console.log(TabsStore)
         this.clearallTabs()
         this.displayTabs(TabsStore.tabs)
     }

@@ -18,6 +18,7 @@ class Dispatcher {
     }
 
     dispatch(action) {
+        // console.log('action, ', action)
         if (typeof action === 'function') return action(this.dispatch)
 
         this._stores.forEach(s => s._onDispatch(action))

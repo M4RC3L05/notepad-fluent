@@ -84,8 +84,20 @@ ipcMain.on('loadFile', (e, d) => {
                 eolType: getLineEnding(data.toString())
             })
         })
-        .on('error', () => e.sender.send('fileLoadDone', { success: false }))
-        .on('end', () => e.sender.send('fileLoadDone', { success: true }))
+        .on('error', () =>
+            e.sender.send('fileLoadDone', {
+                success: false,
+                path: e && e.path ? e.path : d.path,
+                displayName: path.basename(e && e.path ? e.path : d.path)
+            })
+        )
+        .on('end', () =>
+            e.sender.send('fileLoadDone', {
+                success: true,
+                path: e && e.path ? e.path : d.path,
+                displayName: path.basename(e && e.path ? e.path : d.path)
+            })
+        )
 })
 
 ipcMain.on('cancelLoad', () => {
@@ -128,9 +140,13 @@ ipcMain.on('createFile', e => {
     dialog.showSaveDialog(r => {
         if (!r) return
 
-        e.sender.send('newFileCreated', {
-            path: r,
-            displayName: path.basename(r)
+        fs.open(r, 'w', (err, fd) => {
+            fs.close(fd, err => {
+                e.sender.send('newFileCreated', {
+                    path: r,
+                    displayName: path.basename(r)
+                })
+            })
         })
     })
 })

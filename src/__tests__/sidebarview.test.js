@@ -53,17 +53,4 @@ describe('SideBar tests', () => {
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('cancelLoad')
         expect(electron.ipcRenderer.send).toHaveBeenCalledWith('openFileDialog')
     })
-
-    it('Should trigger close open file', () => {
-        SideBarView.create(Dispatcher)
-
-        const sideBar = document.querySelector('.side-bar')
-        const closeFileBtn = sideBar.querySelector('.side-bar__item#close_file')
-
-        expect(closeFileBtn.style.display).toBe('none')
-        Dispatcher.dispatch(doneLoadFileAction())
-        expect(closeFileBtn.style.display).toBe('block')
-        closeFileBtn.click()
-        expect(closeFileBtn.style.display).toBe('none')
-    })
 })

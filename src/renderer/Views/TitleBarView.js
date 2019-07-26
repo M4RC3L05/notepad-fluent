@@ -5,6 +5,7 @@ import EditorStore from '../Stores/EditorStore'
 import SideBarStore from '../Stores/SideBarStore'
 import ConfirmDialogView from './ConfirmDialogView'
 import Dispatcher from '../Dispatcher'
+import TabsStore from '../Stores/TabsStore'
 
 class TitleBarView extends View {
     constructor(dispatcher) {
@@ -20,7 +21,7 @@ class TitleBarView extends View {
     }
 
     getStores() {
-        return [TitleBarStore, SideBarStore, EditorStore]
+        return [TitleBarStore, SideBarStore, TabsStore]
     }
 
     static create(...props) {
@@ -40,7 +41,10 @@ class TitleBarView extends View {
 
                 switch (btnType) {
                     case 'close':
-                        if (this.getState().EditorStore.isEditorDirty) {
+                        const activeTab = this.getState().TabsStore.tabs.find(
+                            tab => tab.isActive
+                        )
+                        if (activeTab && activeTab.isDirty) {
                             const confirmDialog = ConfirmDialogView.create(
                                 Dispatcher,
                                 {

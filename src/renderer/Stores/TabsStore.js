@@ -89,12 +89,19 @@ class TabsStore extends Store {
     }
 }
 
-export const tabFactory = (displayName, fullName, isActive, isDirty) => ({
+export const tabFactory = (
+    displayName,
+    fullName,
+    isActive,
+    isDirty,
+    isFile
+) => ({
     displayName,
     fullName,
     id: uuid(),
     isActive,
-    isDirty
+    isDirty,
+    isFile
 })
 
 export default TabsStore.create()
