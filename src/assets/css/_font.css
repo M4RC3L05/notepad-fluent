@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Segoe MDL2 Assets';
+    font-style: normal;
+    font-display: swap;
+    src: local('Segoe MDL2 Assets'),
+        url('~@static/fonts/SegMDL2.ttf') format('truetype');
+}
