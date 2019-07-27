@@ -5,8 +5,8 @@ import SideBarStore from '../Stores/SideBarStore'
 import TabsStore from '../Stores/TabsStore'
 
 class SideBarView extends View {
-    constructor(dispatch) {
-        super(dispatch)
+    constructor(props) {
+        super(props)
 
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
@@ -22,7 +22,7 @@ class SideBarView extends View {
     }
 
     getStores() {
-        return [SideBarStore, TabsStore]
+        return [SideBarStore]
     }
 
     setUpUI() {
@@ -53,6 +53,10 @@ class SideBarView extends View {
         this.configBtn.addEventListener('click', () => {
             ipcRenderer.send('openConfigFile')
         })
+    }
+
+    shouldComponentUpdate(prevState, newState) {
+        return prevState.isOpen !== newState.isOpen
     }
 
     render() {

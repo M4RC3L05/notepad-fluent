@@ -26,13 +26,14 @@ import Dispatcher from '../Dispatcher'
 class EditorView extends View {
     static SCROLL_INFO_BY_TABS = {}
 
-    constructor(dispatcher) {
-        super(dispatcher)
+    constructor(props) {
+        super(props)
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
         this.saveContents = this.saveContents.bind(this)
         this.createEditorInstance = this.createEditorInstance.bind(this)
         this.shouldCreateTab = this.shouldCreateTab.bind(this)
+        this.confirmAction = this.confirmAction.bind(this)
 
         this.setUpUI()
         this.setUpListeners()
@@ -112,11 +113,9 @@ class EditorView extends View {
 
                 if (tab) {
                     if (tab.isDirty) {
-                        const confirmDialog = ConfirmDialogView.create({
-                            dispatcher: Dispatcher,
-                            confirmMessage:
-                                'Tem a certesa que pretende mudar de ficheiro sem guardar?',
-                            onConfirm: () => {
+                        this.confirmAction(
+                            'Tem a certesa que pretende mudar de ficheiro sem guardar?',
+                            () => {
                                 this.dispatch(
                                     createNewTab(
                                         tabFactory(
@@ -130,10 +129,9 @@ class EditorView extends View {
                                 )
                                 this.dispatch(setFileEOLType('CRLF'))
                                 this.dispatch(setFileEncodingType('UTF-8'))
-                                confirmDialog.onDestroy()
                             },
-                            onCancel: () => confirmDialog.onDestroy()
-                        })
+                            () => {}
+                        )
                     } else {
                         this.dispatch(
                             createNewTab(
@@ -172,20 +170,17 @@ class EditorView extends View {
 
                 if (tab) {
                     if (tab.isDirty) {
-                        const confirmDialog = ConfirmDialogView.create({
-                            dispatcher: Dispatcher,
-                            confirmMessage:
-                                'Tem a certesa que pretende fechar o ficheiro sem guardar?',
-                            onConfirm: () => {
+                        this.confirmAction(
+                            'Tem a certesa que pretende fechar o ficheiro sem guardar?',
+                            () => {
                                 if (TabsStore.tabs.length <= 1) {
                                     this.dispatch(setFileEOLType(''))
                                     this.dispatch(setFileEncodingType(''))
                                 }
                                 this.dispatch(closeOpenTab(tab.id))
-                                confirmDialog.onDestroy()
                             },
-                            onCancel: () => confirmDialog.onDestroy()
-                        })
+                            () => {}
+                        )
                     } else {
                         if (TabsStore.tabs.length <= 1) {
                             this.dispatch(setFileEOLType(''))
@@ -275,7 +270,6 @@ class EditorView extends View {
                 return
             }
             this.shouldCreateTab(displayName, path, true)
-            this.dispatch(tabsIsLoadingFile(true))
             this.dispatch(startLoadFileAction())
             ipcRenderer.send('loadFile', {
                 path
@@ -283,8 +277,8 @@ class EditorView extends View {
         })
 
         ipcRenderer.on('newFileCreated', (e, d) => {
-            this.dispatch(tabsIsLoadingFile(true))
             this.shouldCreateTab(d.displayName, d.path, true)
+            this.dispatch(startLoadFileAction())
             this.saveContents()
         })
 
@@ -300,6 +294,20 @@ class EditorView extends View {
             ipcRenderer.emit('newFileOpen', d)
         })
         ipcRenderer.send('check-initfile', {})
+    }
+
+    confirmAction(confirmMessage, onConfirm, onCancel) {
+        const confirmDialog = ConfirmDialogView.create({
+            confirmMessage,
+            onConfirm: (...args) => {
+                onConfirm(...args)
+                confirmDialog.onDestroy()
+            },
+            onCancel: (...args) => {
+                onCancel(...args)
+                confirmDialog.onDestroy()
+            }
+        })
     }
 
     shouldCreateTab(displayName, fullName, isFile) {
@@ -330,7 +338,9 @@ class EditorView extends View {
             currTab.fullName === 'Untitled' &&
             !currTab.isFile
         ) {
-            this.dispatch(updateTab(currTab.id, { displayName, fullName }))
+            this.dispatch(
+                updateTab(currTab.id, { displayName, fullName, isFile })
+            )
             return
         }
 
@@ -372,6 +382,36 @@ class EditorView extends View {
                 .removeChild(this.codem.getWrapperElement())
     }
 
+    shouldComponentUpdate(prevState, nextState) {
+        if (prevState.hasOwnProperty('tabs')) {
+            const prevActiveTab = prevState.tabs.find(tab => tab.isActive)
+            const nextActiveTab = nextState.tabs.find(tab => tab.isActive)
+
+            if (!prevActiveTab || !nextActiveTab) return true
+
+            if (prevActiveTab.id !== nextActiveTab.id) return true
+
+            return false
+        }
+
+        if (prevState.hasOwnProperty('fileEncoding')) {
+            return (
+                prevState.fileEncoding !== nextState.fileEncoding ||
+                prevState.fileEndOfLineType !== nextState.fileEndOfLineType
+            )
+        }
+
+        if (prevState.hasOwnProperty('isLoadingFile')) {
+            return (
+                prevState.isLoadingFile !== nextState.isLoadingFile ||
+                prevState.isSavingFile !== nextState.isSavingFile ||
+                prevState.shouldResetEditor !== nextState.shouldResetEditor
+            )
+        }
+
+        return false
+    }
+
     render() {
         const { EditorStore, BottomStatusBarStore, TabsStore } = this.getState()
 
@@ -384,7 +424,6 @@ class EditorView extends View {
             const activeTab = TabsStore.tabs.find(tab => tab.isActive)
             if (activeTab) {
                 if (!this.activeTab || this.activeTab.id !== activeTab.id) {
-                    console.log('destroy')
                     this.onDestroy()
                     this.activeTab = activeTab
                     this.createEditorInstance()

@@ -8,10 +8,11 @@ import {
 } from '../actions'
 import ConfirmDialogView from './ConfirmDialogView'
 import Dispatcher from '../Dispatcher'
+import EditorStore from '../Stores/EditorStore'
 
 class TabsView extends View {
-    constructor(dispatcher) {
-        super(dispatcher)
+    constructor(props) {
+        super(props)
 
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
@@ -20,6 +21,7 @@ class TabsView extends View {
         this.onTabLeave = this.onTabLeave.bind(this)
         this.closeTab = this.closeTab.bind(this)
         this.onTabClick = this.onTabClick.bind(this)
+        this.confirmAction = this.confirmAction.bind(this)
 
         this.setUpUI()
         this.setUpListeners()
@@ -28,7 +30,7 @@ class TabsView extends View {
     }
 
     getStores() {
-        return [TabsStore]
+        return [TabsStore, EditorStore]
     }
 
     static create(...props) {
@@ -133,31 +135,50 @@ class TabsView extends View {
     }
 
     onTabClick(e) {
-        const { TabsStore } = this.getState()
-        if (TabsStore.isLoadingFile) return
+        const { EditorStore, TabsStore } = this.getState()
+        if (EditorStore.isLoadingFile) return
 
-        if (!e.target.getAttribute('data-key'))
-            this.dispatch(
-                activateTab(e.target.parentNode.getAttribute('data-key'))
+        const tab = TabsStore.tabs.find(tab => tab.isActive)
+
+        if (tab.isDirty) {
+            this.confirmAction(
+                'Tem a certesa que pretende mudar de ficheiro sem guardar?',
+                () => {
+                    if (!e.target.getAttribute('data-key'))
+                        this.dispatch(
+                            activateTab(
+                                e.target.parentNode.getAttribute('data-key')
+                            )
+                        )
+                    else
+                        this.dispatch(
+                            activateTab(e.target.getAttribute('data-key'))
+                        )
+                },
+                () => {}
             )
-        else this.dispatch(activateTab(e.target.getAttribute('data-key')))
+        } else {
+            if (!e.target.getAttribute('data-key'))
+                this.dispatch(
+                    activateTab(e.target.parentNode.getAttribute('data-key'))
+                )
+            else this.dispatch(activateTab(e.target.getAttribute('data-key')))
+        }
     }
 
     closeTab(e) {
         e.stopPropagation()
-        const { TabsStore } = this.getState()
-        if (TabsStore.isLoadingFile) return
+        const { TabsStore, EditorStore } = this.getState()
+        if (EditorStore.isLoadingFile) return
 
         const tab = TabsStore.tabs.find(
             tab => tab.id === e.target.parentNode.getAttribute('data-key')
         )
 
         if (tab.isDirty) {
-            const confirmDialog = ConfirmDialogView.create({
-                dispatcher: Dispatcher,
-                confirmMessage:
-                    'Tem a certesa que pretende fechar o ficheiro sem guardar?',
-                onConfirm: () => {
+            this.confirmAction(
+                'Tem a certesa que pretende fechar o ficheiro sem guardar?',
+                () => {
                     if (TabsStore.tabs.length <= 1) {
                         this.dispatch(setFileEOLType(''))
                         this.dispatch(setFileEncodingType(''))
@@ -167,10 +188,9 @@ class TabsView extends View {
                             e.target.parentNode.getAttribute('data-key')
                         )
                     )
-                    confirmDialog.onDestroy()
                 },
-                onCancel: () => confirmDialog.onDestroy()
-            })
+                () => {}
+            )
         } else {
             if (TabsStore.tabs.length <= 1) {
                 this.dispatch(setFileEOLType(''))
@@ -180,6 +200,50 @@ class TabsView extends View {
                 closeOpenTab(e.target.parentNode.getAttribute('data-key'))
             )
         }
+    }
+
+    confirmAction(confirmMessage, onConfirm, onCancel) {
+        const confirmDialog = ConfirmDialogView.create({
+            confirmMessage,
+            onConfirm: (...args) => {
+                onConfirm(...args)
+                confirmDialog.onDestroy()
+            },
+            onCancel: (...args) => {
+                onCancel(...args)
+                confirmDialog.onDestroy()
+            }
+        })
+    }
+
+    shouldComponentUpdate(prevState, nextState) {
+        if (prevState.hasOwnProperty('tabs')) {
+            let big, small
+
+            if (prevState.tabs.length > nextState.tabs.length) {
+                big = prevState.tabs
+                small = nextState.tabs
+            } else {
+                big = nextState.tabs
+                small = prevState.tabs
+            }
+
+            return !big.every((bigTab, i) => {
+                const smallTab = small[i]
+
+                if (!smallTab) return false
+
+                return (
+                    bigTab.id === smallTab.id &&
+                    bigTab.displayName === smallTab.displayName &&
+                    bigTab.fullName === smallTab.fullName &&
+                    bigTab.isActive === smallTab.isActive &&
+                    bigTab.isDirty === smallTab.isDirty
+                )
+            })
+        }
+
+        return false
     }
 
     render() {

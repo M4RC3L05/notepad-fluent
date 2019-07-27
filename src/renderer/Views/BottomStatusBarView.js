@@ -4,8 +4,8 @@ import { setFileEOLType, setFileEncodingType } from '../actions'
 import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 
 class BottomStatusBarView extends View {
-    constructor(dispatcher) {
-        super(dispatcher)
+    constructor(props) {
+        super(props)
 
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
@@ -40,9 +40,15 @@ class BottomStatusBarView extends View {
         })
     }
 
+    shouldComponentUpdate(prevState, newState) {
+        return (
+            prevState.fileEncoding !== newState.fileEncoding ||
+            prevState.fileEndOfLineType !== newState.fileEndOfLineType
+        )
+    }
+
     render() {
         const { BottomStatusBarStore } = this.getState()
-
         this.encodingTypeDisplay.textContent = BottomStatusBarStore.fileEncoding
         this.eolTypeDisplay.textContent = BottomStatusBarStore.fileEndOfLineType
     }

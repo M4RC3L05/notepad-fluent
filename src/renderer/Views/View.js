@@ -1,12 +1,15 @@
+import Dispatcher from '../Dispatcher'
+
 class View {
     constructor(props) {
         this.getStores = this.getStores.bind(this)
         this.dispatch = this.dispatch.bind(this)
         this.getState = this.getState.bind(this)
         this.render = this.render.bind(this)
-        const { dispatcher, ...rest } = props
-        this._dispatcher = dispatcher
-        this._props = rest
+        this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this)
+
+        this._dispatcher = Dispatcher
+        this._props = props || {}
 
         this._stores = this.getStores()
         this._stores.forEach(s => {
@@ -42,6 +45,10 @@ class View {
             }),
             {}
         )
+    }
+
+    shouldComponentUpdate(prevState, nextState) {
+        return true
     }
 
     onDestroy() {

@@ -30,17 +30,25 @@ class Store {
         throw Error(`The method reduce must be implemented`)
     }
 
-    _notify() {
-        this.views.forEach(v => v.render())
+    _notify(prevState, newState) {
+        this.views.forEach(v => {
+            if (
+                v.shouldComponentUpdate &&
+                typeof v.shouldComponentUpdate === 'function'
+            ) {
+                if (v.shouldComponentUpdate(prevState, newState)) v.render()
+            } else v.render()
+        })
     }
 
     _onDispatch(action) {
         const newState = this.reduce(this._state, action)
+        const prevState = this._state
         if (newState === this._state) return
 
         this._state = newState
 
-        this._notify()
+        this._notify(prevState, newState)
     }
 }
 

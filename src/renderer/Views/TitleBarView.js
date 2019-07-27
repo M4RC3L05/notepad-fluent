@@ -8,8 +8,8 @@ import Dispatcher from '../Dispatcher'
 import TabsStore from '../Stores/TabsStore'
 
 class TitleBarView extends View {
-    constructor(dispatcher) {
-        super(dispatcher)
+    constructor(props) {
+        super(props)
 
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
@@ -78,6 +78,15 @@ class TitleBarView extends View {
                 }
             })
         )
+    }
+
+    shouldComponentUpdate(prevState, nextState) {
+        if (prevState.hasOwnProperty('isOpen'))
+            return prevState.isOpen !== nextState.isOpen
+
+        if (prevState.hasOwnProperty('titleBarText'))
+            return prevState.titleBarText !== nextState.titleBarText
+        return false
     }
 
     render() {

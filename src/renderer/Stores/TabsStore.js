@@ -24,8 +24,7 @@ class TabsStore extends Store {
 
     getInitialState() {
         return {
-            tabs: [],
-            isLoadingFile: false
+            tabs: []
         }
     }
 
