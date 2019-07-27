@@ -9,6 +9,10 @@
         "bg-color": "#222222",
         "text-color": "#fff",
         "dialog-bg-color": "#000",
-        "dialog-text-color": "#fff"
+        "dialog-text-color": "#fff",
+        "tab-bg-color": "#2d2d2d",
+        "tab-active-indicator-color": "#fff",
+        "tab-text-color": "#fff",
+        "tabs-bg": "#2d2d2d"
     }
 }
