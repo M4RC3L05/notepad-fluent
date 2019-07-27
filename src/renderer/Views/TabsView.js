@@ -153,7 +153,8 @@ class TabsView extends View {
         )
 
         if (tab.isDirty) {
-            const confirmDialog = ConfirmDialogView.create(Dispatcher, {
+            const confirmDialog = ConfirmDialogView.create({
+                dispatcher: Dispatcher,
                 confirmMessage:
                     'Tem a certesa que pretende fechar o ficheiro sem guardar?',
                 onConfirm: () => {

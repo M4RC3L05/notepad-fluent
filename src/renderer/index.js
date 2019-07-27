@@ -9,11 +9,11 @@ import TabsView from './Views/TabsView'
 const start = () => {
     console.log('Starting...')
     const then = performance.now()
-    TitleBarView.create(Dispatcher)
-    SideBarView.create(Dispatcher)
-    TabsView.create(Dispatcher)
-    EditorView.create(Dispatcher)
-    BottomStatusBarView.create(Dispatcher)
+    TitleBarView.create({ dispatcher: Dispatcher })
+    SideBarView.create({ dispatcher: Dispatcher })
+    TabsView.create({ dispatcher: Dispatcher })
+    EditorView.create({ dispatcher: Dispatcher })
+    BottomStatusBarView.create({ dispatcher: Dispatcher })
     console.log('Start take: ', performance.now() - then)
 }
 document.addEventListener('DOMContentLoaded', start)

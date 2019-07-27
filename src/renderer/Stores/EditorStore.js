@@ -46,16 +46,13 @@ class EditorStore extends Store {
                 return {
                     ...state,
                     isLoadingFile: false,
-                    isEditorDirty: true,
-                    isSavingFile: false,
-                    filePath: 'Untitled'
+                    isSavingFile: false
                 }
 
             case CANCEL_FILE_LOAD:
                 return {
                     ...state,
                     isLoadingFile: false,
-                    isEditorDirty: false,
                     isSavingFile: false
                 }
 
@@ -70,8 +67,7 @@ class EditorStore extends Store {
                 return {
                     ...state,
                     isLoadingFile: false,
-                    isEditorDirty: false,
-                    hasFile: true
+                    isEditorDirty: false
                 }
 
             case CHUNK_LOAD_FILE_ACTION:
@@ -80,44 +76,17 @@ class EditorStore extends Store {
                     contents: state.contents + action.payload.chunk
                 }
 
-            case FILE_CONTENT_CHANGE_ACTION:
-                return { ...state, isEditorDirty: true }
-
             case START_FILE_SAVE_ACTION:
                 return { ...state, isSavingFile: true }
 
             case DONE_FILE_SAVE_ACTION:
                 return {
                     ...state,
-                    isSavingFile: false,
-                    isEditorDirty: false,
-                    hasFile: true
-                }
-
-            case SET_FILE_ACTION:
-                return {
-                    ...state,
-                    filePath: action.payload.path,
-                    hasFile: true
+                    isSavingFile: false
                 }
 
             case TOGGLE_SHOULD_EDITOR_RESET:
                 return { ...state, shouldResetEditor: action.payload }
-
-            case CLOSE_OPEN_FILE:
-                return {
-                    isLoadingFile: false,
-                    actionMessage: '',
-                    filePath: '',
-                    isEditorDirty: false,
-                    isSavingFile: false,
-                    shouldResetEditor: true,
-                    hasFile: false,
-                    fileLength: 0
-                }
-
-            case FILE_CONTENT_PRESTINE_ACTION:
-                return { ...state, isEditorDirty: false }
 
             default:
                 return state

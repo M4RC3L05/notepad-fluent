@@ -112,30 +112,28 @@ class EditorView extends View {
 
                 if (tab) {
                     if (tab.isDirty) {
-                        const confirmDialog = ConfirmDialogView.create(
-                            Dispatcher,
-                            {
-                                confirmMessage:
-                                    'Tem a certesa que pretende mudar de ficheiro sem guardar?',
-                                onConfirm: () => {
-                                    this.dispatch(
-                                        createNewTab(
-                                            tabFactory(
-                                                'Untitled',
-                                                'Untitled',
-                                                true,
-                                                false,
-                                                false
-                                            )
+                        const confirmDialog = ConfirmDialogView.create({
+                            dispatcher: Dispatcher,
+                            confirmMessage:
+                                'Tem a certesa que pretende mudar de ficheiro sem guardar?',
+                            onConfirm: () => {
+                                this.dispatch(
+                                    createNewTab(
+                                        tabFactory(
+                                            'Untitled',
+                                            'Untitled',
+                                            true,
+                                            false,
+                                            false
                                         )
                                     )
-                                    this.dispatch(setFileEOLType('CRLF'))
-                                    this.dispatch(setFileEncodingType('UTF-8'))
-                                    confirmDialog.onDestroy()
-                                },
-                                onCancel: () => confirmDialog.onDestroy()
-                            }
-                        )
+                                )
+                                this.dispatch(setFileEOLType('CRLF'))
+                                this.dispatch(setFileEncodingType('UTF-8'))
+                                confirmDialog.onDestroy()
+                            },
+                            onCancel: () => confirmDialog.onDestroy()
+                        })
                     } else {
                         this.dispatch(
                             createNewTab(
@@ -174,22 +172,20 @@ class EditorView extends View {
 
                 if (tab) {
                     if (tab.isDirty) {
-                        const confirmDialog = ConfirmDialogView.create(
-                            Dispatcher,
-                            {
-                                confirmMessage:
-                                    'Tem a certesa que pretende fechar o ficheiro sem guardar?',
-                                onConfirm: () => {
-                                    if (TabsStore.tabs.length <= 1) {
-                                        this.dispatch(setFileEOLType(''))
-                                        this.dispatch(setFileEncodingType(''))
-                                    }
-                                    this.dispatch(closeOpenTab(tab.id))
-                                    confirmDialog.onDestroy()
-                                },
-                                onCancel: () => confirmDialog.onDestroy()
-                            }
-                        )
+                        const confirmDialog = ConfirmDialogView.create({
+                            dispatcher: Dispatcher,
+                            confirmMessage:
+                                'Tem a certesa que pretende fechar o ficheiro sem guardar?',
+                            onConfirm: () => {
+                                if (TabsStore.tabs.length <= 1) {
+                                    this.dispatch(setFileEOLType(''))
+                                    this.dispatch(setFileEncodingType(''))
+                                }
+                                this.dispatch(closeOpenTab(tab.id))
+                                confirmDialog.onDestroy()
+                            },
+                            onCancel: () => confirmDialog.onDestroy()
+                        })
                     } else {
                         if (TabsStore.tabs.length <= 1) {
                             this.dispatch(setFileEOLType(''))
