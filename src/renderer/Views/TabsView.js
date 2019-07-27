@@ -7,7 +7,6 @@ import {
     setFileEncodingType
 } from '../actions'
 import ConfirmDialogView from './ConfirmDialogView'
-import Dispatcher from '../Dispatcher'
 import EditorStore from '../Stores/EditorStore'
 
 class TabsView extends View {
@@ -135,6 +134,7 @@ class TabsView extends View {
     }
 
     onTabClick(e) {
+        console.log(this.getState())
         const { EditorStore, TabsStore } = this.getState()
         if (EditorStore.isLoadingFile) return
 

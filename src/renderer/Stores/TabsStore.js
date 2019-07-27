@@ -84,9 +84,6 @@ class TabsStore extends Store {
                     )
                 }
 
-            case TABS_IS_LOADING_FILE:
-                return { ...state, isLoadingFile: action.payload }
-
             default:
                 return state
         }

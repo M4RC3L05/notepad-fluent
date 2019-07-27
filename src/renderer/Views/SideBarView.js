@@ -2,7 +2,6 @@ import View from './View'
 import { toggleSideBarAction, cancelFileLoad } from '../actions'
 import { ipcRenderer } from 'electron'
 import SideBarStore from '../Stores/SideBarStore'
-import TabsStore from '../Stores/TabsStore'
 
 class SideBarView extends View {
     constructor(props) {

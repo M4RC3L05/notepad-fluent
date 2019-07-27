@@ -1,10 +1,8 @@
 import View from './View'
 import { ipcRenderer } from 'electron'
 import TitleBarStore from '../Stores/TitleBarStore'
-import EditorStore from '../Stores/EditorStore'
 import SideBarStore from '../Stores/SideBarStore'
 import ConfirmDialogView from './ConfirmDialogView'
-import Dispatcher from '../Dispatcher'
 import TabsStore from '../Stores/TabsStore'
 
 class TitleBarView extends View {
@@ -13,6 +11,7 @@ class TitleBarView extends View {
 
         this.setUpUI = this.setUpUI.bind(this)
         this.setUpListeners = this.setUpListeners.bind(this)
+        this.confirmAction = this.confirmAction.bind(this)
 
         this.setUpUI()
         this.setUpListeners()
@@ -45,16 +44,12 @@ class TitleBarView extends View {
                             tab => tab.isActive
                         )
                         if (activeTab && activeTab.isDirty) {
-                            const confirmDialog = ConfirmDialogView.create(
-                                Dispatcher,
-                                {
-                                    confirmMessage:
-                                        'Tem a certeza que pretende sair, sem guardar?',
-                                    onConfirm: e => {
-                                        ipcRenderer.send('close-app')
-                                    },
-                                    onCancel: e => confirmDialog.onDestroy()
-                                }
+                            this.confirmAction(
+                                'Tem a certeza que pretende sair, sem guardar?',
+                                e => {
+                                    ipcRenderer.send('close-app')
+                                },
+                                e => {}
                             )
                         } else ipcRenderer.send('close-app')
                         break
@@ -78,6 +73,20 @@ class TitleBarView extends View {
                 }
             })
         )
+    }
+
+    confirmAction(confirmMessage, onConfirm, onCancel) {
+        const confirmDialog = ConfirmDialogView.create({
+            confirmMessage,
+            onConfirm: (...args) => {
+                onConfirm(...args)
+                confirmDialog.onDestroy()
+            },
+            onCancel: (...args) => {
+                onCancel(...args)
+                confirmDialog.onDestroy()
+            }
+        })
     }
 
     shouldComponentUpdate(prevState, nextState) {

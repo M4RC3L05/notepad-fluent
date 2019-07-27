@@ -21,7 +21,6 @@ import EditorStore from '../Stores/EditorStore'
 import BottomStatusBarStore from '../Stores/BottomStatusBarStore'
 import TabsStore, { tabFactory } from '../Stores/TabsStore'
 import ConfirmDialogView from './ConfirmDialogView'
-import Dispatcher from '../Dispatcher'
 
 class EditorView extends View {
     static SCROLL_INFO_BY_TABS = {}
@@ -223,7 +222,6 @@ class EditorView extends View {
             const activeTab = TabsStore.tabs.find(tab => tab.isActive)
 
             this.dispatch(setTabDirty(activeTab.id, false))
-            this.dispatch(tabsIsLoadingFile(false))
         })
 
         ipcRenderer.on('fileLoadChunk', (e, d) => {
@@ -246,7 +244,6 @@ class EditorView extends View {
                 if (scrollInfo)
                     this.codem.scrollTo(scrollInfo.left, scrollInfo.top)
             }
-            this.dispatch(tabsIsLoadingFile(false))
         })
 
         ipcRenderer.on('newFileOpen', (e, d) => {
@@ -278,7 +275,7 @@ class EditorView extends View {
 
         ipcRenderer.on('newFileCreated', (e, d) => {
             this.shouldCreateTab(d.displayName, d.path, true)
-            this.dispatch(startLoadFileAction())
+            this.dispatch(startSaveFileAction())
             this.saveContents()
         })
 
@@ -369,6 +366,7 @@ class EditorView extends View {
     }
 
     onDestroy() {
+        console.log('destroy')
         if (this.activeTab) this.activeTab = null
         if (
             this.codem &&
